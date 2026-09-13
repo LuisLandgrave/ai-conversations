@@ -1,0 +1,21 @@
+[book]
+title = "Java build tools"
+authors = ["Luis Landgrave", "Microsoft Copilot"]
+description = "Talk about Java build tools evolution in 2026"
+
+[rust]
+edition = "2024"
+
+[build]
+build-dir = "build"
+create-missing = true
+
+[preprocessor.index]
+
+[preprocessor.links]
+
+[output.html]
+#additional-css = ["custom.css"]
+
+[output.html.search]
+#limit-results = 15
