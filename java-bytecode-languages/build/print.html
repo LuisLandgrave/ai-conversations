@@ -1,0 +1,1345 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Java bytecode languages</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Talk about Java bytecode programming languages evolution">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-e96d0476.css">
+        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-6dfa37ad.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-7107c1cc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Java bytecode languages</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>Java Bytecode Programming Languages Evolution</p>
+<hr>
+<h3 id="overview-and-evolution-of-jvm-bytecode-languages"><a class="header" href="#overview-and-evolution-of-jvm-bytecode-languages">Overview and evolution of JVM bytecode languages</a></h3>
+<p>The JVM started as a <strong>Java-only runtime</strong> and evolved into a <strong>polyglot platform</strong> because of its stability and backward compatibility. Over time the platform absorbed innovations (lambdas, invokedynamic, modules) and enabled many languages to compile to bytecode rather than build new runtimes. The result is an ecosystem where <strong>Java remains the stable backbone</strong> while other languages innovate around ergonomics, paradigms, and domain-specific needs.</p>
+<hr>
+<h3 id="jvm-languages-and-their-best-fit-domains"><a class="header" href="#jvm-languages-and-their-best-fit-domains">JVM languages and their best-fit domains</a></h3>
+<p><strong>Kotlin</strong> — Android and modern backends; <strong>Scala</strong> — big data and advanced FP; <strong>Groovy</strong> — build scripts and DSLs; <strong>Clojure</strong> — immutable/concurrent systems; <strong>JRuby/Jython</strong> — bring Ruby/Python ecosystems to JVM; <strong>GraalVM</strong> — polyglot apps and native images. Each language exists because it solves a specific set of problems Java either solved slowly or never prioritized.</p>
+<hr>
+<h3 id="what-each-language-brings-over-vanilla-java-with-short-examples"><a class="header" href="#what-each-language-brings-over-vanilla-java-with-short-examples">What each language brings over vanilla Java (with short examples)</a></h3>
+<ul>
+<li><strong>Kotlin</strong>: <strong>conciseness, null-safety, coroutines</strong>. Example: <code>data class</code> + <code>suspend</code> functions reduce boilerplate and avoid NPEs.</li>
+<li><strong>Scala</strong>: <strong>functional programming, pattern matching, Option types</strong>. Example: <code>Option[String]</code> and <code>match</code> for safe, expressive domain modeling.</li>
+<li><strong>Groovy</strong>: <strong>dynamic typing and DSLs</strong>. Example: Gradle-style build scripts and safe navigation <code>?.</code>.</li>
+<li><strong>Clojure</strong>: <strong>immutable data structures, STM/agents, macros</strong> — a Lisp approach for concurrency. Example: <code>atom</code> + <code>swap!</code> for safe concurrent updates.</li>
+<li><strong>JRuby/Jython</strong>: <strong>language ergonomics of Ruby/Python with Java interop</strong>. Example: instantiate Java classes from Ruby/Python syntax.</li>
+<li><strong>GraalVM</strong>: <strong>embed other languages and AOT native images</strong>. Example: call Python from Java in-process; compile to native for fast startup.</li>
+</ul>
+<hr>
+<h3 id="why-kotlinscalagroovy-feel-like-typescript-and-where-clojure-differs"><a class="header" href="#why-kotlinscalagroovy-feel-like-typescript-and-where-clojure-differs">Why Kotlin/Scala/Groovy feel like TypeScript (and where Clojure differs)</a></h3>
+<p>Kotlin, Scala, and Groovy address the same pain points TypeScript solved for JavaScript: <strong>less boilerplate, better typing options, safer null handling, and modern async patterns</strong>. Kotlin’s nullable types and coroutines are especially TypeScript‑like in ergonomics. <strong>Clojure is an outlier</strong> — a Lisp with immutable-first design and a different mental model, not a TypeScript analogue.</p>
+<hr>
+<h3 id="oracles-strategy-and-shortterm-feature-predictions"><a class="header" href="#oracles-strategy-and-shortterm-feature-predictions">Oracle’s strategy and short‑term feature predictions</a></h3>
+<p>Oracle modernizes <strong>conservatively</strong>: adopt proven ideas but preserve backward compatibility. <strong>Likely short‑term adoptions</strong>: virtual threads (Loom rollout), pattern‑matching refinements, records and sealed types, incremental type inference, staged Valhalla features, and better Panama/native interop and native‑image workflows. <strong>Unlikely short‑term</strong>: Scala‑level ADTs and advanced type-system rewrites, union/structural types like TypeScript, macros or radical syntax overhauls, dependent types, or wholesale runtime replacement. Expect incremental, opt‑in features rather than disruptive changes.</p>
+<hr>
+<h3 id="practical-recommendations-and-next-steps"><a class="header" href="#practical-recommendations-and-next-steps">Practical recommendations and next steps</a></h3>
+<ul>
+<li>If you need modern ergonomics now → <strong>Kotlin</strong></li>
+<li>If you need FP and Spark → <strong>Scala</strong></li>
+<li>If you need scripting/DSLs → <strong>Groovy</strong></li>
+<li>If you need immutable concurrency → <strong>Clojure</strong></li>
+<li>If you need polyglot or AOT → <strong>GraalVM</strong></li>
+</ul>
+<p>For Java teams: adopt <strong>records, sealed types, and virtual-thread‑friendly designs</strong> now; prepare hot‑path data structures for Valhalla; prototype GraalVM native images if startup/memory matter.</p>
+<hr><div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-1"><a href="#question-1" class="header">Question 1</a></h1>
+<p><em>Let’s talk about Java bytecode programming languages evolution</em></p>
+<hr>
+<p><strong>Java bytecode languages evolved from a single-purpose runtime (Java-only) into a broad ecosystem where many languages compile to JVM bytecode, each filling gaps Java itself didn’t cover.</strong></p>
+<hr>
+<h2 id="-key-milestones-in-java-bytecode-evolution"><a class="header" href="#-key-milestones-in-java-bytecode-evolution">🧩 Key Milestones in Java Bytecode Evolution</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Era</th><th>Java Version / Feature</th><th>Bytecode Impact</th><th>Ecosystem Expansion</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>1996–2004</strong></td><td>Java 1.0–1.4</td><td>Core JVM, class files, HotSpot JIT</td><td>Java-only dominance; bytecode stable but limited</td></tr>
+<tr><td><strong>2004–2014</strong></td><td>Java 5–8</td><td>Generics, annotations, lambdas, streams</td><td>Rise of JVM languages: Scala, Groovy, Clojure, JRuby, Jython</td></tr>
+<tr><td><strong>2017 onward</strong></td><td>Java 9+ (six-month cadence)</td><td>Modularization (Jigsaw), invokedynamic, pattern matching</td><td>Kotlin becomes mainstream; GraalVM enables polyglot bytecode execution</td></tr>
+<tr><td><strong>2021–2026</strong></td><td>Java 17–25 LTS</td><td>Virtual threads (Project Loom), records, sealed classes, native images</td><td>JVM as universal runtime: languages like Kotlin, Scala 3, and even non-Java DSLs thrive</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="-why-bytecode-became-a-multi-language-platform"><a class="header" href="#-why-bytecode-became-a-multi-language-platform">🔑 Why Bytecode Became a Multi-Language Platform</a></h2>
+<ol>
+<li>
+<p><strong>Stability of the JVM</strong></p>
+<ul>
+<li>The JVM guarantees backward compatibility: bytecode from 1996 can still run today.</li>
+<li>This made it attractive for other languages to target the JVM instead of building their own runtime.  <a href="https://en.wikipedia.org/wiki/Java_version_history">Wikipedia</a></li>
+</ul>
+</li>
+<li>
+<p><strong>Invokedynamic (Java 7)</strong></p>
+<ul>
+<li>Introduced to support dynamic languages efficiently.</li>
+<li>Enabled Groovy, JRuby, and Clojure to run faster and integrate better with Java libraries.  <a href="https://techoral.com/java/java-evolution-complete-history.html">Techoral</a></li>
+</ul>
+</li>
+<li>
+<p><strong>Polyglot Runtime (GraalVM)</strong></p>
+<ul>
+<li>GraalVM allows Java bytecode to coexist with LLVM IR, JavaScript, Python, and R.</li>
+<li>This transformed the JVM from “Java-only” into a universal execution environment.  <a href="https://javaomnibus.org/">javaomnibus.org</a></li>
+</ul>
+</li>
+<li>
+<p><strong>Language Diversity</strong></p>
+<ul>
+<li><strong>Scala</strong>: functional + OO hybrid, heavy use in big data (Spark).</li>
+<li><strong>Kotlin</strong>: concise, null-safe, Android’s preferred language.</li>
+<li><strong>Clojure</strong>: Lisp dialect for concurrency and functional programming.</li>
+<li><strong>Groovy</strong>: scripting and DSLs, popular in Gradle builds.</li>
+<li><strong>JRuby/Jython</strong>: brought Ruby and Python ecosystems onto JVM.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="-modern-trends-2020s2026"><a class="header" href="#-modern-trends-2020s2026">🚀 Modern Trends (2020s–2026)</a></h2>
+<ul>
+<li><strong>Virtual Threads (Java 21–25)</strong>: Bytecode now supports lightweight concurrency, making JVM languages competitive with Go and Rust for parallel workloads.  <a href="https://javaomnibus.org/">javaomnibus.org</a></li>
+<li><strong>Native Images (GraalVM)</strong>: Bytecode can be compiled ahead-of-time into fast executables, reducing startup time and memory footprint.</li>
+<li><strong>Cross-language Interop</strong>: Kotlin calling Java, Scala interoperating with Groovy — all possible because they share the same bytecode foundation.</li>
+<li><strong>Enterprise Adoption</strong>: Despite new languages, Java bytecode remains the backbone of banking, telecom, and government systems due to its reliability.  <a href="https://techoral.com/java/java-evolution-complete-history.html">Techoral</a></li>
+</ul>
+<hr>
+<h2 id="-trade-offs-and-challenges"><a class="header" href="#-trade-offs-and-challenges">⚠️ Trade-offs and Challenges</a></h2>
+<ul>
+<li><strong>Performance gaps</strong>: Dynamic JVM languages (Groovy, JRuby) often lag behind Java/Scala in raw throughput.</li>
+<li><strong>Complexity</strong>: Multiple languages on one runtime can fragment tooling and debugging.</li>
+<li><strong>Migration pressure</strong>: Enterprises must balance stability (Java 8/11 LTS) with innovation (Java 17–25).  <a href="https://en.wikipedia.org/wiki/Java_version_history">Wikipedia</a></li>
+</ul>
+<hr>
+<h2 id="-takeaway"><a class="header" href="#-takeaway">🎯 Takeaway</a></h2>
+<p>Java bytecode started as a <strong>Java-only runtime</strong>, but evolved into a <strong>polyglot platform</strong> where languages like Kotlin, Scala, Groovy, and Clojure thrive. The JVM’s stability, backward compatibility, and innovations like invokedynamic and GraalVM turned it into one of the most durable and versatile execution environments in computing history.</p>
+<hr>
+<p>👉 Luis, if you’d like, I can map <strong>which JVM languages best fit different domains today</strong> (e.g., Kotlin for Android, Scala for data, Clojure for concurrency) so you see bytecode’s evolution in practice. Would you like that breakdown?</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<p><a href="https://en.wikipedia.org/wiki/Java_version_history">Wikipedia - Java version history</a></p>
+<p><a href="https://techoral.com/java/java-evolution-complete-history.html">Java Evolution: A Complete History from Java 1 to Java 24 (2026)</a></p>
+<p><a href="https://javaomnibus.org/">JavaOmnibus | Java Evolution, JVM, JLS, Class Files, OOAD, Architecture, and More</a></p>
+<hr><div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-2"><a href="#question-2" class="header">Question 2</a></h1>
+<p><em>Yes, please! It’s important to know what’s the best use case for each one</em></p>
+<hr>
+<p>Perfect, Luis 🤓 — let’s break down the <strong>major JVM languages</strong> and their <strong>best-fit domains</strong> so you can see how bytecode evolution translates into practical use cases today:</p>
+<hr>
+<h2 id="-jvm-languages--their-sweet-spots"><a class="header" href="#-jvm-languages--their-sweet-spots">🧩 JVM Languages &amp; Their Sweet Spots</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Language</th><th>Strengths</th><th>Best Use Cases</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Java</strong></td><td>Stability, massive ecosystem, enterprise support</td><td>Banking, telecom, government systems, large-scale enterprise apps</td></tr>
+<tr><td><strong>Kotlin</strong></td><td>Concise syntax, null-safety, full Java interop</td><td>Android development (Google’s preferred), modern backend services (Ktor, Spring Boot)</td></tr>
+<tr><td><strong>Scala</strong></td><td>Functional + OO hybrid, strong type system</td><td>Big data (Apache Spark), complex backend systems, academic/research projects</td></tr>
+<tr><td><strong>Groovy</strong></td><td>Dynamic, scripting-friendly, DSL creation</td><td>Build automation (Gradle), quick prototyping, testing frameworks</td></tr>
+<tr><td><strong>Clojure</strong></td><td>Lisp dialect, immutable data, concurrency focus</td><td>Highly concurrent systems, event-driven apps, exploratory programming</td></tr>
+<tr><td><strong>JRuby</strong></td><td>Ruby on JVM, Rails compatibility</td><td>Ruby apps needing JVM libraries, enterprise integration</td></tr>
+<tr><td><strong>Jython</strong></td><td>Python on JVM</td><td>Python scripts needing Java interop, legacy integration</td></tr>
+<tr><td><strong>GraalVM Polyglot</strong></td><td>Runs Java, JS, Python, R, LLVM IR</td><td>Cross-language projects, performance-sensitive polyglot apps, native image deployment</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="-trends-shaping-their-roles-2020s2026"><a class="header" href="#-trends-shaping-their-roles-2020s2026">🚀 Trends Shaping Their Roles (2020s–2026)</a></h2>
+<ul>
+<li><strong>Kotlin</strong>: Dominant in Android, but also gaining traction in backend microservices.</li>
+<li><strong>Scala</strong>: Still strong in data engineering, though Kotlin is eating into general backend adoption.</li>
+<li><strong>Groovy</strong>: Less trendy, but indispensable in Gradle and Jenkins pipelines.</li>
+<li><strong>Clojure</strong>: Niche but powerful for concurrency-heavy workloads.</li>
+<li><strong>Java</strong>: The “boring but reliable” backbone — enterprises stick with it for long-term stability.</li>
+<li><strong>Polyglot (GraalVM)</strong>: Becoming the go-to for teams mixing languages (e.g., Python ML + Java backend).</li>
+</ul>
+<hr>
+<h2 id="-quick-decision-guide"><a class="header" href="#-quick-decision-guide">🎯 Quick Decision Guide</a></h2>
+<ul>
+<li><strong>Mobile apps → Kotlin</strong></li>
+<li><strong>Enterprise backend → Java (or Kotlin for modern teams)</strong></li>
+<li><strong>Big data pipelines → Scala</strong></li>
+<li><strong>Build automation → Groovy</strong></li>
+<li><strong>Concurrency-heavy systems → Clojure</strong></li>
+<li><strong>Polyglot integration → GraalVM</strong></li>
+</ul>
+<hr>
+<p>👉 If you want, I can sketch a <strong>visual decision tree</strong> showing how to pick the right JVM language depending on project type (mobile, backend, data, scripting, concurrency). Would you like me to build that flowchart for clarity?</p>
+<hr><div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-3"><a href="#question-3" class="header">Question 3</a></h1>
+<p><em>Better explain to me what each one “brings to the table” to be preferred over plain old vanilla Java</em></p>
+<hr>
+<p>Got it, Luis 🤓 — let’s unpack what each JVM language <em>brings to the table</em> that makes teams choose it over “plain old vanilla Java.” Think of it as <strong>value-add layers on top of the JVM’s stability</strong>:</p>
+<hr>
+<h2 id="-what-each-jvm-language-adds-beyond-java"><a class="header" href="#-what-each-jvm-language-adds-beyond-java">🧩 What Each JVM Language Adds Beyond Java</a></h2>
+<h3 id="java"><a class="header" href="#java"><strong>Java</strong></a></h3>
+<ul>
+<li><strong>Baseline strengths</strong>: Stability, backward compatibility, massive ecosystem, tooling maturity.</li>
+<li><strong>Limitations</strong>: Verbose syntax, slower adoption of modern language features, less expressive for rapid prototyping.</li>
+</ul>
+<hr>
+<h3 id="kotlin"><a class="header" href="#kotlin"><strong>Kotlin</strong></a></h3>
+<ul>
+<li><strong>Brings to the table</strong>:
+<ul>
+<li><strong>Conciseness</strong>: Far fewer lines than Java for the same logic.</li>
+<li><strong>Null-safety</strong>: Eliminates <code>NullPointerException</code> headaches.</li>
+<li><strong>Modern syntax</strong>: Data classes, extension functions, coroutines.</li>
+<li><strong>Full Java interop</strong>: Can call Java libraries seamlessly.</li>
+</ul>
+</li>
+<li><strong>Why preferred</strong>: Makes Android and backend development faster, safer, and more pleasant without losing Java’s ecosystem.</li>
+</ul>
+<hr>
+<h3 id="scala"><a class="header" href="#scala"><strong>Scala</strong></a></h3>
+<ul>
+<li><strong>Brings to the table</strong>:
+<ul>
+<li><strong>Functional programming</strong>: Immutability, higher-order functions, pattern matching.</li>
+<li><strong>Advanced type system</strong>: Stronger abstractions than Java.</li>
+<li><strong>Concurrency models</strong>: Akka actors, parallel collections.</li>
+</ul>
+</li>
+<li><strong>Why preferred</strong>: Ideal for <strong>big data (Spark)</strong> and complex backend systems where functional paradigms shine.</li>
+</ul>
+<hr>
+<h3 id="groovy"><a class="header" href="#groovy"><strong>Groovy</strong></a></h3>
+<ul>
+<li><strong>Brings to the table</strong>:
+<ul>
+<li><strong>Dynamic typing</strong>: More scripting-like than Java.</li>
+<li><strong>DSL creation</strong>: Perfect for build tools (Gradle).</li>
+<li><strong>Rapid prototyping</strong>: Less ceremony, faster iteration.</li>
+</ul>
+</li>
+<li><strong>Why preferred</strong>: Used in <strong>build automation, testing frameworks, and scripting</strong> where flexibility matters more than strict typing.</li>
+</ul>
+<hr>
+<h3 id="clojure"><a class="header" href="#clojure"><strong>Clojure</strong></a></h3>
+<ul>
+<li><strong>Brings to the table</strong>:
+<ul>
+<li><strong>Lisp heritage</strong>: Homoiconicity, macros, powerful metaprogramming.</li>
+<li><strong>Immutable data structures</strong>: Safer concurrency.</li>
+<li><strong>Functional-first design</strong>: Encourages declarative, composable code.</li>
+</ul>
+</li>
+<li><strong>Why preferred</strong>: For <strong>concurrency-heavy systems</strong> and developers who want a radically different paradigm on the JVM.</li>
+</ul>
+<hr>
+<h3 id="jruby--jython"><a class="header" href="#jruby--jython"><strong>JRuby / Jython</strong></a></h3>
+<ul>
+<li><strong>Brings to the table</strong>:
+<ul>
+<li>Access to <strong>Ruby or Python ecosystems</strong> while still running on JVM.</li>
+<li>Bridges dynamic languages with enterprise Java libraries.</li>
+</ul>
+</li>
+<li><strong>Why preferred</strong>: When teams want Ruby/Python expressiveness but need JVM performance or integration.</li>
+</ul>
+<hr>
+<h3 id="graalvm-polyglot"><a class="header" href="#graalvm-polyglot"><strong>GraalVM Polyglot</strong></a></h3>
+<ul>
+<li><strong>Brings to the table</strong>:
+<ul>
+<li><strong>Cross-language execution</strong>: Run Java, JS, Python, R, LLVM IR together.</li>
+<li><strong>Native images</strong>: Ahead-of-time compilation for fast startup and low memory.</li>
+</ul>
+</li>
+<li><strong>Why preferred</strong>: For <strong>polyglot projects</strong> or performance-sensitive apps that need multiple languages in one runtime.</li>
+</ul>
+<hr>
+<h2 id="-summary-insight"><a class="header" href="#-summary-insight">🎯 Summary Insight</a></h2>
+<ul>
+<li><strong>Kotlin</strong> → Developer productivity + safety.</li>
+<li><strong>Scala</strong> → Functional power + big data.</li>
+<li><strong>Groovy</strong> → DSLs + scripting.</li>
+<li><strong>Clojure</strong> → Concurrency + functional purity.</li>
+<li><strong>JRuby/Jython</strong> → Dynamic language ecosystems on JVM.</li>
+<li><strong>GraalVM</strong> → Polyglot + native performance.</li>
+</ul>
+<p>Each one exists because <strong>Java alone couldn’t cover all developer needs</strong> — bytecode stability made it possible for these languages to innovate without reinventing the runtime.</p>
+<hr>
+<p>👉 Do you want me to <strong>map these strengths into a visual “comparison grid”</strong> (like a quick reference card) so you can see at a glance which language is best for which scenario?</p>
+<hr><div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-4"><a href="#question-4" class="header">Question 4</a></h1>
+<p><em>Please elaborate a bit more with some examples to understand the difference better</em></p>
+<hr>
+<h3 id="jvm-languages-compared-with-concrete-examples"><a class="header" href="#jvm-languages-compared-with-concrete-examples">JVM languages compared with concrete examples</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Language</th><th style="text-align: right">Key advantage</th><th>Typical domain</th><th>Short example that shows the advantage</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Kotlin</strong></td><td style="text-align: right"><strong>Conciseness + null-safety + coroutines</strong></td><td>Android, modern backends</td><td>Data class + coroutine example reduces boilerplate and avoids NPEs.</td></tr>
+<tr><td><strong>Scala</strong></td><td style="text-align: right"><strong>Powerful FP and type system</strong></td><td>Big data, complex backend logic</td><td>Pattern matching + immutable collections + concise Spark code.</td></tr>
+<tr><td><strong>Groovy</strong></td><td style="text-align: right"><strong>Scripting and DSLs</strong></td><td>Build scripts, quick prototyping, Gradle</td><td>Very short Gradle-style DSL and dynamic object creation.</td></tr>
+<tr><td><strong>Clojure</strong></td><td style="text-align: right"><strong>Immutable data + concurrency primitives</strong></td><td>Event-driven, concurrent systems</td><td>STM/agents and immutable maps make concurrent updates safe.</td></tr>
+<tr><td><strong>JRuby / Jython</strong></td><td style="text-align: right"><strong>Bring Ruby/Python ecosystems to JVM</strong></td><td>Legacy apps, scripting with Java interop</td><td>Use Ruby/Python libraries while calling Java classes.</td></tr>
+<tr><td><strong>GraalVM</strong></td><td style="text-align: right"><strong>Polyglot + native images</strong></td><td>Polyglot services, low-startup microservices</td><td>AOT native image for fast startup; call Python from Java.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h3 id="kotlin--what-it-brings-and-an-example"><a class="header" href="#kotlin--what-it-brings-and-an-example">Kotlin — what it brings and an example</a></h3>
+<p><strong>Why choose it over Java</strong></p>
+<ul>
+<li><strong>Less boilerplate</strong>: <code>data class</code>, properties, type inference.</li>
+<li><strong>Null-safety</strong>: nullable types are explicit.</li>
+<li><strong>Coroutines</strong>: lightweight concurrency for async code without callbacks.</li>
+<li><strong>Seamless Java interop</strong>: call existing Java libraries unchanged.</li>
+</ul>
+<p><strong>Example</strong> — data class + coroutine vs Java verbose equivalent</p>
+<p>Kotlin:</p>
+<pre><code class="language-kotlin">data class User(val id: Int, val name: String?)
+
+suspend fun fetchUser(id: Int): User = withContext(Dispatchers.IO) {
+  // pretend network call
+  User(id, "Luis")
+}
+
+fun main() = runBlocking {
+  val user = fetchUser(42)
+  println(user.name?.length ?: "unknown")
+}
+</code></pre>
+<ul>
+<li><strong>What this shows</strong>: <code>data class</code> auto-generates equals/hashCode/toString; <code>name</code> is nullable and handled safely; <code>suspend</code> + <code>withContext</code> make async code linear and readable.</li>
+</ul>
+<hr>
+<h3 id="scala--what-it-brings-and-an-example"><a class="header" href="#scala--what-it-brings-and-an-example">Scala — what it brings and an example</a></h3>
+<p><strong>Why choose it over Java</strong></p>
+<ul>
+<li><strong>Functional-first</strong>: immutability, higher-order functions, pattern matching.</li>
+<li><strong>Advanced type system</strong>: algebraic data types, implicits/typeclasses (Scala 3 improves ergonomics).</li>
+<li><strong>Ecosystem for data</strong>: Spark APIs are idiomatic in Scala.</li>
+</ul>
+<p><strong>Example</strong> — pattern matching and collections</p>
+<pre><code class="language-scala">sealed trait Result
+case class Success(value: Int) extends Result
+case class Failure(reason: String) extends Result
+
+def handle(r: Result): String = r match {
+  case Success(v) =&gt; s"ok $v"
+  case Failure(msg) =&gt; s"error: $msg"
+}
+
+val nums = List(1,2,3)
+val doubled = nums.map(_ * 2)
+</code></pre>
+<ul>
+<li><strong>What this shows</strong>: concise expression of domain models and transformations; fewer nulls, more algebraic modeling than Java.</li>
+</ul>
+<hr>
+<h3 id="groovy--what-it-brings-and-an-example"><a class="header" href="#groovy--what-it-brings-and-an-example">Groovy — what it brings and an example</a></h3>
+<p><strong>Why choose it over Java</strong></p>
+<ul>
+<li><strong>Dynamic typing</strong> and concise syntax for scripts.</li>
+<li><strong>Excellent for DSLs</strong> (Gradle build scripts are Groovy-based).</li>
+<li><strong>Fast prototyping</strong>: less ceremony than Java.</li>
+</ul>
+<p><strong>Example</strong> — tiny DSL-like script</p>
+<pre><code class="language-groovy">def person = [name: 'Luis', age: 34]
+println person.name.toUpperCase()
+</code></pre>
+<p>Gradle build snippet:</p>
+<pre><code class="language-groovy">plugins {
+  id 'java'
+}
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter'
+}
+</code></pre>
+<ul>
+<li><strong>What this shows</strong>: Groovy reads like a scripting language and is ideal for build configuration and quick glue code.</li>
+</ul>
+<hr>
+<h3 id="clojure--what-it-brings-and-an-example"><a class="header" href="#clojure--what-it-brings-and-an-example">Clojure — what it brings and an example</a></h3>
+<p><strong>Why choose it over Java</strong></p>
+<ul>
+<li><strong>Immutable data structures by default</strong>; encourages pure functions.</li>
+<li><strong>Powerful concurrency primitives</strong>: atoms, refs, agents, core.async.</li>
+<li><strong>Macros and homoiconicity</strong>: code-as-data for DSLs and metaprogramming.</li>
+</ul>
+<p><strong>Example</strong> — immutable update and agent usage</p>
+<pre><code class="language-clojure">(def state (atom {:count 0}))
+
+(defn inc-count []
+  (swap! state update :count inc))
+
+(dotimes [_ 100]
+  (future (inc-count)))
+
+@state ;; safe concurrent updates
+</code></pre>
+<ul>
+<li><strong>What this shows</strong>: <code>atom</code> + <code>swap!</code> provide safe, lock-free updates; code is concise and expressive for concurrent logic.</li>
+</ul>
+<hr>
+<h3 id="jruby-and-jython--what-they-bring-and-an-example"><a class="header" href="#jruby-and-jython--what-they-bring-and-an-example">JRuby and Jython — what they bring and an example</a></h3>
+<p><strong>Why choose them over Java</strong></p>
+<ul>
+<li><strong>Language ergonomics</strong> of Ruby/Python while leveraging JVM libraries and deployment.</li>
+<li><strong>Good for teams with existing Ruby/Python code</strong> that need JVM integration or enterprise JVM features.</li>
+</ul>
+<p><strong>Example</strong> — calling a Java class from JRuby</p>
+<pre><code class="language-ruby">java_import 'java.util.ArrayList'
+list = ArrayList.new
+list.add("hello")
+puts list.size
+</code></pre>
+<ul>
+<li><strong>What this shows</strong>: reuse Java classes with Ruby syntax; useful for gradual migration or embedding scripts.</li>
+</ul>
+<hr>
+<h3 id="graalvm--what-it-brings-and-an-example"><a class="header" href="#graalvm--what-it-brings-and-an-example">GraalVM — what it brings and an example</a></h3>
+<p><strong>Why choose it over plain Java</strong></p>
+<ul>
+<li><strong>Polyglot runtime</strong>: call JS/Python/R from Java and vice versa.</li>
+<li><strong>Native image</strong>: AOT compile to a native binary for fast startup and low memory — useful for serverless or tiny microservices.</li>
+</ul>
+<p><strong>Example</strong> — Java calling Python snippet (conceptual)</p>
+<pre><code class="language-java">Context ctx = Context.create();
+Value py = ctx.eval("python", "def greet(n):\n  return 'hi ' + n\n");
+String res = py.invokeMember("greet", "Luis").asString();
+</code></pre>
+<ul>
+<li><strong>What this shows</strong>: embed other languages in the same process; compile to native image for low-latency startup.</li>
+</ul>
+<hr>
+<h3 id="practical-trade-offs-and-when-to-prefer-each"><a class="header" href="#practical-trade-offs-and-when-to-prefer-each">Practical trade-offs and when to prefer each</a></h3>
+<ul>
+<li><strong>Choose Kotlin</strong> when you want modern syntax, null-safety, and easy migration from Java with minimal friction.</li>
+<li><strong>Choose Scala</strong> when you need advanced FP, expressive type-level design, or are working heavily with Spark.</li>
+<li><strong>Choose Groovy</strong> for build scripts, CI glue, or when you need a scripting layer on top of Java.</li>
+<li><strong>Choose Clojure</strong> when immutability and concurrency are central and you prefer a Lisp approach.</li>
+<li><strong>Choose JRuby/Jython</strong> to reuse Ruby/Python codebases while integrating with Java.</li>
+<li><strong>Choose GraalVM</strong> when you need polyglot integration or native images for microservices.</li>
+</ul>
+<hr>
+<h3 id="final-practical-examples-by-scenario"><a class="header" href="#final-practical-examples-by-scenario">Final practical examples by scenario</a></h3>
+<ul>
+<li><strong>Android app</strong>: Kotlin — concise UI models, coroutines for async network calls.</li>
+<li><strong>Data pipeline with Spark</strong>: Scala — idiomatic Spark APIs and functional transformations.</li>
+<li><strong>CI/CD and build logic</strong>: Groovy — Gradle scripts and Jenkins pipelines.</li>
+<li><strong>High-concurrency event processor</strong>: Clojure — immutable state and STM/agents.</li>
+<li><strong>Polyglot microservice</strong>: GraalVM — Python ML model called from Java backend, compiled to native image for fast cold starts.</li>
+</ul>
+<hr>
+<p>If you want, I can now:</p>
+<ul>
+<li>Produce <strong>side‑by‑side code comparisons</strong> (Java vs Kotlin vs Scala) for a single feature (e.g., REST endpoint, data model, async call).</li>
+<li>Or build a <strong>decision flowchart</strong> that asks a few project questions and recommends one or two JVM languages with reasons and migration tips. Which would help you most next?</li>
+</ul>
+<hr><div style="break-before: page; page-break-before: always;"></div>
+<p><em>Side-by-side comparison would be nice</em></p>
+<hr>
+<p>Absolutely, Luis 🤓 — here’s a <strong>clean, side‑by‑side comparison</strong> showing how <em>the same task</em> looks in <strong>Java</strong>, <strong>Kotlin</strong>, <strong>Scala</strong>, <strong>Groovy</strong>, and <strong>Clojure</strong>.<br>This will make the differences <em>immediately visible</em>.</p>
+<p>To keep things fair, we’ll implement the same tiny feature:</p>
+<blockquote>
+<p><strong>Fetch a user asynchronously and print their name length safely.</strong></p>
+</blockquote>
+<p>This touches:</p>
+<ul>
+<li>data modeling</li>
+<li>null handling</li>
+<li>async/concurrency</li>
+<li>syntax ergonomics</li>
+</ul>
+<hr>
+<h1 id="-sidebyside-comparison-same-feature-different-jvm-languages"><a class="header" href="#-sidebyside-comparison-same-feature-different-jvm-languages">🧩 Side‑by‑Side Comparison: Same Feature, Different JVM Languages</a></h1>
+<hr>
+<h2 id="1-java-baseline"><a class="header" href="#1-java-baseline">1️⃣ <strong>Java (baseline)</strong></a></h2>
+<p>Verbose, explicit, safe, but ceremony-heavy.</p>
+<pre><code class="language-java">public class User {
+    private final int id;
+    private final String name;
+
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public String getName() { return name; }
+}
+
+CompletableFuture&lt;User&gt; fetchUser(int id) {
+    return CompletableFuture.supplyAsync(() -&gt; new User(id, "Luis"));
+}
+
+public static void main(String[] args) {
+    fetchUser(42).thenAccept(user -&gt; {
+        String name = user.getName();
+        System.out.println(name != null ? name.length() : "unknown");
+    });
+}
+</code></pre>
+<h3 id="what-you-feel-here"><a class="header" href="#what-you-feel-here">What you feel here</a></h3>
+<ul>
+<li>Lots of boilerplate (getters, constructor).</li>
+<li>Null checks are manual.</li>
+<li>Async code uses callbacks → nesting.</li>
+</ul>
+<hr>
+<h2 id="2-kotlin--concise-nullsafe-coroutinefriendly"><a class="header" href="#2-kotlin--concise-nullsafe-coroutinefriendly">2️⃣ <strong>Kotlin — concise, null‑safe, coroutine‑friendly</strong></a></h2>
+<pre><code class="language-kotlin">data class User(val id: Int, val name: String?)
+
+suspend fun fetchUser(id: Int): User {
+    return User(id, "Luis")
+}
+
+fun main() = runBlocking {
+    val user = fetchUser(42)
+    println(user.name?.length ?: "unknown")
+}
+</code></pre>
+<h3 id="what-kotlin-brings"><a class="header" href="#what-kotlin-brings">What Kotlin brings</a></h3>
+<ul>
+<li><code>data class</code> auto‑generates everything.</li>
+<li><code>String?</code> makes null explicit.</li>
+<li><code>?.</code> and <code>?:</code> eliminate NPE boilerplate.</li>
+<li>Coroutines make async code look synchronous.</li>
+</ul>
+<p><strong>Feels like Java without the pain.</strong></p>
+<hr>
+<h2 id="3-scala--functional-expressive-powerful"><a class="header" href="#3-scala--functional-expressive-powerful">3️⃣ <strong>Scala — functional, expressive, powerful</strong></a></h2>
+<pre><code class="language-scala">case class User(id: Int, name: Option[String])
+
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+
+def fetchUser(id: Int): Future[User] =
+  Future(User(id, Some("Luis")))
+
+fetchUser(42).map { user =&gt;
+  println(user.name.map(_.length).getOrElse("unknown"))
+}
+</code></pre>
+<h3 id="what-scala-brings"><a class="header" href="#what-scala-brings">What Scala brings</a></h3>
+<ul>
+<li><code>Option</code> replaces null entirely.</li>
+<li>Pattern matching, immutability, FP style.</li>
+<li>Futures integrate with functional pipelines.</li>
+</ul>
+<p><strong>Feels like a functional language on the JVM.</strong></p>
+<hr>
+<h2 id="4-groovy--dynamic-flexible-scriptingfriendly"><a class="header" href="#4-groovy--dynamic-flexible-scriptingfriendly">4️⃣ <strong>Groovy — dynamic, flexible, scripting‑friendly</strong></a></h2>
+<pre><code class="language-groovy">class User {
+    int id
+    String name
+}
+
+def fetchUser = { id -&gt;
+    new User(id: id, name: "Luis")
+}
+
+def user = fetchUser(42)
+println user.name?.length() ?: "unknown"
+</code></pre>
+<h3 id="what-groovy-brings"><a class="header" href="#what-groovy-brings">What Groovy brings</a></h3>
+<ul>
+<li>Dynamic typing → less ceremony.</li>
+<li>Optional semicolons, closures, simple syntax.</li>
+<li>Safe navigation <code>?.</code> like Kotlin.</li>
+<li>Great for DSLs (Gradle), scripting, glue code.</li>
+</ul>
+<p><strong>Feels like Python/Ruby on the JVM.</strong></p>
+<hr>
+<h2 id="5-clojure--immutable-concurrent-lispstyle"><a class="header" href="#5-clojure--immutable-concurrent-lispstyle">5️⃣ <strong>Clojure — immutable, concurrent, Lisp‑style</strong></a></h2>
+<pre><code class="language-clojure">(defn fetch-user [id]
+  {:id id :name "Luis"})
+
+(let [user (fetch-user 42)]
+  (println (if-let [n (:name user)]
+             (count n)
+             "unknown")))
+</code></pre>
+<h3 id="what-clojure-brings"><a class="header" href="#what-clojure-brings">What Clojure brings</a></h3>
+<ul>
+<li>Immutable maps instead of classes.</li>
+<li>No nulls unless you introduce them.</li>
+<li>Very concise, very expressive.</li>
+<li>Concurrency primitives (atoms, refs, agents).</li>
+</ul>
+<p><strong>Feels like a functional Lisp with superpowers.</strong></p>
+<hr>
+<h1 id="-summary-what-each-one-adds-beyond-java"><a class="header" href="#-summary-what-each-one-adds-beyond-java">🧠 Summary: What Each One Adds Beyond Java</a></h1>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Language</th><th>Main Value Add</th><th>What you feel when coding</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Java</strong></td><td>Stability, explicitness</td><td>Safe but verbose</td></tr>
+<tr><td><strong>Kotlin</strong></td><td>Concise, null‑safe, modern</td><td>Java but enjoyable</td></tr>
+<tr><td><strong>Scala</strong></td><td>FP power, strong types</td><td>Elegant but complex</td></tr>
+<tr><td><strong>Groovy</strong></td><td>Dynamic, DSL-friendly</td><td>Fast scripting, flexible</td></tr>
+<tr><td><strong>Clojure</strong></td><td>Immutable FP, simplicity</td><td>Minimalist, expressive</td></tr>
+<tr><td><strong>JRuby/Jython</strong></td><td>Ruby/Python ergonomics</td><td>Dynamic languages on JVM</td></tr>
+<tr><td><strong>GraalVM</strong></td><td>Polyglot + native</td><td>JVM as universal runtime</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<p>Luis, if you want, I can also produce:</p>
+<h3 id="-a-second-comparison"><a class="header" href="#-a-second-comparison">🔧 A second comparison</a></h3>
+<ul>
+<li>REST endpoint in all languages</li>
+<li>Data transformation pipeline</li>
+<li>Concurrency example (threads vs coroutines vs futures vs STM)</li>
+</ul>
+<h3 id="-or-a-visual-decision-matrix"><a class="header" href="#-or-a-visual-decision-matrix">📊 Or a visual decision matrix</a></h3>
+<ul>
+<li>“If your project needs X → choose Y”</li>
+</ul>
+<p>Just tell me what angle you want next.</p>
+<hr><div style="break-before: page; page-break-before: always;"></div>
+<p><em>With the exception of Clojure, they look to me a lot like TypeScript to some extent…</em></p>
+<hr>
+<p>Oh Luis, your intuition is <strong>spot‑on</strong> 🤓 — <strong>Kotlin, Scala, and Groovy absolutely <em>feel</em> like TypeScript</strong> in many ways.<br>And the reason is actually deep and fascinating: <strong>they all evolved to fix the same pain points that “old-school” Java and JavaScript had.</strong></p>
+<p>Let me break this down clearly and show you <em>exactly</em> where the similarities come from — and where they diverge.</p>
+<hr>
+<h1 id="-why-kotlin--scala--groovy-feel-like-typescript"><a class="header" href="#-why-kotlin--scala--groovy-feel-like-typescript">🧩 Why Kotlin / Scala / Groovy feel like TypeScript</a></h1>
+<h3 id="because-they-all-solve-the-same-historical-problems"><a class="header" href="#because-they-all-solve-the-same-historical-problems"><strong>Because they all solve the same historical problems:</strong></a></h3>
+<ul>
+<li>Too much boilerplate</li>
+<li>Weak or unsafe null handling</li>
+<li>Verbose async patterns</li>
+<li>Lack of expressive syntax</li>
+<li>Need for modern functional features</li>
+<li>Desire for optional typing or richer type systems</li>
+</ul>
+<p>TypeScript did this for JavaScript.<br>Kotlin/Scala/Groovy did this for Java.</p>
+<p>So yes — they <em>feel</em> like cousins.</p>
+<hr>
+<h1 id="-side-by-side-conceptual-comparison"><a class="header" href="#-side-by-side-conceptual-comparison">🔍 Side-by-side conceptual comparison</a></h1>
+<h2 id="1-kotlin--typescript-with-better-null-safety"><a class="header" href="#1-kotlin--typescript-with-better-null-safety">1️⃣ <strong>Kotlin ≈ TypeScript with better null-safety</strong></a></h2>
+<p>Both add:</p>
+<ul>
+<li>Optional types (<code>String?</code> vs <code>string | null</code>)</li>
+<li>Modern syntax</li>
+<li>Cleaner classes</li>
+<li>Async that reads like sync (coroutines vs async/await)</li>
+<li>Extension functions / methods</li>
+</ul>
+<p><strong>Example: Kotlin</strong></p>
+<pre><code class="language-kotlin">val name: String? = "Luis"
+println(name?.length ?: 0)
+</code></pre>
+<p><strong>Example: TypeScript</strong></p>
+<pre><code class="language-ts">const name: string | null = "Luis";
+console.log(name?.length ?? 0);
+</code></pre>
+<p>These two lines are almost twins.</p>
+<hr>
+<h2 id="2-scala--typescript--fp-libraries-ramda-rxjs-etc"><a class="header" href="#2-scala--typescript--fp-libraries-ramda-rxjs-etc">2️⃣ <strong>Scala ≈ TypeScript + FP libraries (Ramda, RxJS, etc.)</strong></a></h2>
+<p>Scala leans heavily into:</p>
+<ul>
+<li>Immutability</li>
+<li>Pattern matching</li>
+<li>Algebraic data types</li>
+<li>Higher-order functions</li>
+<li>Strong typing</li>
+</ul>
+<p>TypeScript <em>can</em> do FP, but Scala is FP-native.</p>
+<p><strong>Scala</strong></p>
+<pre><code class="language-scala">val name: Option[String] = Some("Luis")
+println(name.map(_.length).getOrElse(0))
+</code></pre>
+<p><strong>TypeScript (FP style)</strong></p>
+<pre><code class="language-ts">import { map, option } from "fp-ts";
+
+const name = option.some("Luis");
+console.log(map((s: string) =&gt; s.length)(name));
+</code></pre>
+<p>Same idea — Scala just makes it <em>natural</em>.</p>
+<hr>
+<h2 id="3-groovy--typescript-when-used-dynamically"><a class="header" href="#3-groovy--typescript-when-used-dynamically">3️⃣ <strong>Groovy ≈ TypeScript when used dynamically</strong></a></h2>
+<p>Groovy is:</p>
+<ul>
+<li>Dynamic</li>
+<li>Flexible</li>
+<li>Scripting-friendly</li>
+<li>Optional typing</li>
+<li>Has safe navigation (<code>?.</code>) like TS</li>
+</ul>
+<p><strong>Groovy</strong></p>
+<pre><code class="language-groovy">def user = [name: 'Luis']
+println user.name?.length()
+</code></pre>
+<p><strong>TypeScript (dynamic mode)</strong></p>
+<pre><code class="language-ts">const user: any = { name: "Luis" };
+console.log(user.name?.length);
+</code></pre>
+<p>Groovy is basically “TypeScript with dynamic mode always on.”</p>
+<hr>
+<h1 id="-so-whats-the-real-difference"><a class="header" href="#-so-whats-the-real-difference">🧠 So what’s the <em>real</em> difference?</a></h1>
+<h3 id="typescript--improves-javascript"><a class="header" href="#typescript--improves-javascript"><strong>TypeScript → improves JavaScript</strong></a></h3>
+<ul>
+<li>Runs in browsers</li>
+<li>Compiles to JS</li>
+<li>Designed for web dev</li>
+<li>Optional typing</li>
+<li>Async/await built-in</li>
+<li>Structural typing</li>
+</ul>
+<h3 id="kotlin--scala--groovy--improve-java"><a class="header" href="#kotlin--scala--groovy--improve-java"><strong>Kotlin / Scala / Groovy → improve Java</strong></a></h3>
+<ul>
+<li>Run on JVM</li>
+<li>Compile to bytecode</li>
+<li>Designed for backend, Android, data pipelines</li>
+<li>Stronger typing (Kotlin/Scala)</li>
+<li>Concurrency models (coroutines, futures, actors)</li>
+<li>Interop with Java ecosystem</li>
+</ul>
+<h3 id="clojure--totally-different-paradigm"><a class="header" href="#clojure--totally-different-paradigm"><strong>Clojure → totally different paradigm</strong></a></h3>
+<ul>
+<li>Lisp</li>
+<li>Immutable by default</li>
+<li>Homoiconic</li>
+<li>Concurrency primitives</li>
+<li>No classes, no inheritance</li>
+<li>Feels nothing like TypeScript</li>
+</ul>
+<hr>
+<h1 id="-the-punchline"><a class="header" href="#-the-punchline">🎯 The punchline</a></h1>
+<p>You’re absolutely right:<br><strong>Kotlin, Scala, and Groovy feel like TypeScript because they’re solving the same problems — just in the JVM world instead of the browser world.</strong></p>
+<p>But each one pushes in a different direction:</p>
+<ul>
+<li><strong>Kotlin → TypeScript but safer and more structured</strong></li>
+<li><strong>Scala → TypeScript + hardcore functional programming</strong></li>
+<li><strong>Groovy → TypeScript’s dynamic mode with DSL superpowers</strong></li>
+<li><strong>Clojure → a different universe entirely</strong></li>
+</ul>
+<hr>
+<p>Luis, if you want, I can go even deeper:</p>
+<h3 id="-option-a"><a class="header" href="#-option-a">🔧 Option A</a></h3>
+<p>Side-by-side comparison of <strong>classes</strong>, <strong>async</strong>, <strong>null handling</strong>, <strong>collections</strong>, <strong>pattern matching</strong>, <strong>type systems</strong> across all languages + TypeScript.</p>
+<h3 id="-option-b"><a class="header" href="#-option-b">🔧 Option B</a></h3>
+<p>Explain <strong>why Kotlin feels like the “TypeScript of the JVM”</strong> (this is a fun one).</p>
+<h3 id="-option-c"><a class="header" href="#-option-c">🔧 Option C</a></h3>
+<p>Show how <strong>the same microservice</strong> looks in Java vs Kotlin vs Scala vs TypeScript (Node).</p>
+<p>Which direction do you want to explore next?</p>
+<hr><div style="break-before: page; page-break-before: always;"></div>
+<p><em>Is there some middle ground, maybe Java is aiming to solve some of those problems, or we just have to deal for some more time with a mix and match of bytecode ecosystems?</em></p>
+<hr>
+<p>Luis, this is a <strong>great</strong> question — and honestly one that the entire JVM community has been wrestling with for more than a decade.<br>Let me give you the clearest, most honest breakdown of where things actually stand today, and where Java is <em>really</em> heading.</p>
+<hr>
+<h1 id="-is-java-moving-toward-a-middle-ground"><a class="header" href="#-is-java-moving-toward-a-middle-ground">🧩 Is Java moving toward a “middle ground”?</a></h1>
+<p><strong>Yes — but slowly, conservatively, and intentionally.</strong><br>Java <em>is</em> adopting modern features, but it will never become Kotlin or Scala.<br>Its mission is different: <strong>evolve without breaking 25 years of enterprise code.</strong></p>
+<p>Here’s what Java has already done to close the gap:</p>
+<h3 id="-records-java-16"><a class="header" href="#-records-java-16">✔️ <strong>Records (Java 16+)</strong></a></h3>
+<p>Java’s answer to Kotlin data classes.</p>
+<pre><code class="language-java">record User(int id, String name) {}
+</code></pre>
+<p>This eliminates tons of boilerplate — but still less flexible than Kotlin’s <code>data class</code>.</p>
+<hr>
+<h3 id="-pattern-matching-java-1721"><a class="header" href="#-pattern-matching-java-1721">✔️ <strong>Pattern Matching (Java 17–21)</strong></a></h3>
+<p>Java’s version of Scala-style matching.</p>
+<pre><code class="language-java">switch (obj) {
+    case String s -&gt; System.out.println(s.length());
+    case Integer i -&gt; System.out.println(i + 1);
+}
+</code></pre>
+<p>Still more verbose than Scala, but the direction is clear.</p>
+<hr>
+<h3 id="-virtual-threads-java-21"><a class="header" href="#-virtual-threads-java-21">✔️ <strong>Virtual Threads (Java 21)</strong></a></h3>
+<p>Java’s answer to Kotlin coroutines.</p>
+<p>They’re not exactly the same, but they solve the same problem:<br><strong>millions of lightweight concurrent tasks without thread explosion.</strong></p>
+<pre><code class="language-java">Thread.startVirtualThread(() -&gt; {
+    System.out.println("Hello!");
+});
+</code></pre>
+<p>This is huge — it makes Java competitive with Go, Kotlin, and Node for concurrency.</p>
+<hr>
+<h3 id="-sealed-classes-java-17"><a class="header" href="#-sealed-classes-java-17">✔️ <strong>Sealed Classes (Java 17)</strong></a></h3>
+<p>Java’s version of Scala/Kotlin sealed hierarchies.</p>
+<pre><code class="language-java">sealed interface Shape permits Circle, Square {}
+</code></pre>
+<p>This enables safer modeling of domain types.</p>
+<hr>
+<h3 id="-local-variable-type-inference-var"><a class="header" href="#-local-variable-type-inference-var">✔️ <strong>Local variable type inference (<code>var</code>)</strong></a></h3>
+<p>Java’s tiny nod toward Kotlin/TypeScript ergonomics.</p>
+<pre><code class="language-java">var list = new ArrayList&lt;String&gt;();
+</code></pre>
+<p>Not as powerful as Kotlin’s inference, but it reduces noise.</p>
+<hr>
+<h3 id="-project-valhalla-in-progress"><a class="header" href="#-project-valhalla-in-progress">✔️ <strong>Project Valhalla (in progress)</strong></a></h3>
+<p>Java’s future answer to:</p>
+<ul>
+<li>value types</li>
+<li>zero-cost abstractions</li>
+<li>better generics</li>
+</ul>
+<p>This is a <em>massive</em> modernization effort.</p>
+<hr>
+<h1 id="-so-is-java-becoming-kotlinscalagroovy"><a class="header" href="#-so-is-java-becoming-kotlinscalagroovy">🎯 So is Java becoming Kotlin/Scala/Groovy?</a></h1>
+<p><strong>No — Java is becoming “modern Java,” not a clone of its JVM siblings.</strong></p>
+<p>Java’s philosophy:</p>
+<ul>
+<li><strong>Add features slowly</strong></li>
+<li><strong>Maintain backward compatibility</strong></li>
+<li><strong>Never break enterprise systems</strong></li>
+<li><strong>Stay readable for millions of developers</strong></li>
+</ul>
+<p>Kotlin/Scala/Groovy philosophy:</p>
+<ul>
+<li><strong>Innovate aggressively</strong></li>
+<li><strong>Reduce boilerplate</strong></li>
+<li><strong>Improve developer happiness</strong></li>
+<li><strong>Experiment with paradigms</strong></li>
+</ul>
+<p>Java is catching up, but it will never be as expressive or flexible as Kotlin or Scala — and that’s by design.</p>
+<hr>
+<h1 id="-so-will-we-keep-mix-and-match-jvm-languages"><a class="header" href="#-so-will-we-keep-mix-and-match-jvm-languages">🧩 So will we keep “mix and match” JVM languages?</a></h1>
+<p><strong>Yes — and that’s actually a strength, not a problem.</strong></p>
+<p>Here’s why:</p>
+<h3 id="-the-jvm-is-a-polyglot-platform"><a class="header" href="#-the-jvm-is-a-polyglot-platform">✔️ The JVM is a <em>polyglot platform</em></a></h3>
+<p>Bytecode stability allows many languages to coexist without conflict.</p>
+<h3 id="-different-languages-serve-different-needs"><a class="header" href="#-different-languages-serve-different-needs">✔️ Different languages serve different needs</a></h3>
+<ul>
+<li>Kotlin → modern apps, Android, backend</li>
+<li>Scala → big data, FP-heavy systems</li>
+<li>Groovy → scripting, DSLs, Gradle</li>
+<li>Clojure → concurrency, functional purity</li>
+<li>Java → enterprise backbone</li>
+<li>GraalVM → polyglot + native performance</li>
+</ul>
+<h3 id="-enterprises-already-run-multiple-jvm-languages"><a class="header" href="#-enterprises-already-run-multiple-jvm-languages">✔️ Enterprises already run multiple JVM languages</a></h3>
+<p>It’s normal to see:</p>
+<ul>
+<li>Java microservices</li>
+<li>Kotlin Android apps</li>
+<li>Scala Spark jobs</li>
+<li>Groovy build scripts</li>
+<li>Clojure event processors</li>
+</ul>
+<p>This diversity is not going away — it’s increasing.</p>
+<hr>
+<h1 id="-the-real-middle-ground-is-the-jvm-itself"><a class="header" href="#-the-real-middle-ground-is-the-jvm-itself">🧠 The real “middle ground” is the JVM itself</a></h1>
+<p>The JVM is the unifying layer.<br>Not Java.<br>Not Kotlin.<br>Not Scala.</p>
+<p><strong>The bytecode ecosystem <em>is</em> the middle ground.</strong></p>
+<p>Java is modernizing, but the JVM is what keeps everything interoperable.</p>
+<hr>
+<h1 id="-my-honest-prediction-based-on-current-trends"><a class="header" href="#-my-honest-prediction-based-on-current-trends">🔮 My honest prediction (based on current trends)</a></h1>
+<h3 id="java-will-continue-evolving-slowly-but-steadily"><a class="header" href="#java-will-continue-evolving-slowly-but-steadily"><strong>Java will continue evolving slowly but steadily.</strong></a></h3>
+<p>It will adopt:</p>
+<ul>
+<li>more pattern matching</li>
+<li>more functional constructs</li>
+<li>more ergonomic syntax</li>
+<li>better concurrency</li>
+<li>value types</li>
+<li>safer generics</li>
+</ul>
+<h3 id="kotlin-will-remain-the-typescript-of-the-jvm"><a class="header" href="#kotlin-will-remain-the-typescript-of-the-jvm"><strong>Kotlin will remain the “TypeScript of the JVM.”</strong></a></h3>
+<p>Modern, expressive, safe, and pleasant.</p>
+<h3 id="scala-will-stay-the-fp-powerhouse"><a class="header" href="#scala-will-stay-the-fp-powerhouse"><strong>Scala will stay the FP powerhouse.</strong></a></h3>
+<h3 id="groovy-will-remain-the-dsl-king"><a class="header" href="#groovy-will-remain-the-dsl-king"><strong>Groovy will remain the DSL king.</strong></a></h3>
+<h3 id="clojure-will-stay-the-lisp-outlier"><a class="header" href="#clojure-will-stay-the-lisp-outlier"><strong>Clojure will stay the Lisp outlier.</strong></a></h3>
+<h3 id="graalvm-will-make-the-jvm-even-more-polyglot"><a class="header" href="#graalvm-will-make-the-jvm-even-more-polyglot"><strong>GraalVM will make the JVM even more polyglot.</strong></a></h3>
+<p>So yes — the JVM world will continue being a <strong>mix-and-match ecosystem</strong>, but Java is absolutely moving toward a more modern middle ground.</p>
+<hr>
+<p>Luis, if you want, I can map out:</p>
+<h3 id="-a-timeline-showing-how-java-is-converging-with-kotlinscala"><a class="header" href="#-a-timeline-showing-how-java-is-converging-with-kotlinscala">🔧 A timeline showing how Java is converging with Kotlin/Scala</a></h3>
+<h3 id="-a-prediction-of-what-java-30-might-look-like"><a class="header" href="#-a-prediction-of-what-java-30-might-look-like">🔧 A prediction of what Java 30+ might look like</a></h3>
+<h3 id="-a-future-of-jvm-languages-chart"><a class="header" href="#-a-future-of-jvm-languages-chart">🔧 A “future of JVM languages” chart</a></h3>
+<h3 id="-or-a-breakdown-of-which-features-java-will-never-adopt"><a class="header" href="#-or-a-breakdown-of-which-features-java-will-never-adopt">🔧 Or a breakdown of which features Java will <em>never</em> adopt</a></h3>
+<p>Just tell me which direction you want to explore.</p>
+<hr><div style="break-before: page; page-break-before: always;"></div>
+<p><em>Just to have something to think about, do you know what’s Oracle’s plan for Java in this regard? I felt that Scala disrupted Java very heavily when it arrived and Oracle quickly adopted the functional programming as some sort of “response” to avoid Java being left behind… But I’d like to hear your thoughts on this</em></p>
+<hr>
+<p>Luis, this is one of those questions where the <em>real story</em> is way more interesting than the surface-level “Java added lambdas because Scala existed.”<br>Let me give you a clear, structured, <strong>no‑nonsense breakdown</strong> of Oracle’s actual strategy for Java — and how it relates to Scala’s disruption.</p>
+<hr>
+<h1 id="-first-your-intuition-is-correct"><a class="header" href="#-first-your-intuition-is-correct">🧩 First: Your intuition is correct</a></h1>
+<p>Scala <em>did</em> disrupt Java.<br>And yes — Java’s adoption of functional programming <strong>was absolutely a response</strong> to avoid losing relevance.</p>
+<p>But the <em>full</em> picture is deeper:</p>
+<p>Scala didn’t just introduce FP.<br>Scala introduced:</p>
+<ul>
+<li>higher‑order functions</li>
+<li>closures</li>
+<li>pattern matching</li>
+<li>immutability</li>
+<li>type inference</li>
+<li>algebraic data types</li>
+<li>actors (Akka)</li>
+<li>a modern collections library</li>
+<li>concise syntax</li>
+<li>a more expressive type system</li>
+</ul>
+<p>Java looked old by comparison.</p>
+<p>So Java had two choices:</p>
+<ol>
+<li><strong>Modernize</strong>, or</li>
+<li><strong>Become COBOL</strong></li>
+</ol>
+<p>They chose modernization — but in a very “Java” way.</p>
+<hr>
+<h1 id="-oracles-actual-long-term-plan-for-java"><a class="header" href="#-oracles-actual-long-term-plan-for-java">🧭 Oracle’s actual long-term plan for Java</a></h1>
+<p>Oracle’s strategy is built around <strong>four pillars</strong>:</p>
+<h2 id="1-modernize-java-gradually-without-breaking-enterprise-systems"><a class="header" href="#1-modernize-java-gradually-without-breaking-enterprise-systems">1️⃣ <strong>Modernize Java gradually without breaking enterprise systems</strong></a></h2>
+<p>Java’s biggest selling point is stability.<br>Banks, governments, telecoms, insurance, logistics — all depend on it.</p>
+<p>So Oracle’s rule is:</p>
+<blockquote>
+<p>“Modernize Java, but never break old Java.”</p>
+</blockquote>
+<p>This is why Java:</p>
+<ul>
+<li>adds features slowly</li>
+<li>avoids syntax that could confuse beginners</li>
+<li>keeps backward compatibility sacred</li>
+<li>prefers explicitness over cleverness</li>
+</ul>
+<p>This is why Java will <em>never</em> become Scala or Kotlin.</p>
+<hr>
+<h2 id="2-adopt-the-most-successful-ideas-from-other-jvm-languages"><a class="header" href="#2-adopt-the-most-successful-ideas-from-other-jvm-languages">2️⃣ <strong>Adopt the most successful ideas from other JVM languages</strong></a></h2>
+<p>Oracle watches the JVM ecosystem closely.</p>
+<p>When a feature proves itself in:</p>
+<ul>
+<li>Scala</li>
+<li>Kotlin</li>
+<li>Groovy</li>
+<li>Clojure</li>
+</ul>
+<p>…Java eventually adopts a <strong>conservative version</strong> of it.</p>
+<p>Examples:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Origin</th><th>Java’s adoption</th></tr>
+</thead>
+<tbody>
+<tr><td>Lambdas</td><td>Scala/Groovy</td><td>Java 8</td></tr>
+<tr><td>Streams</td><td>Scala collections</td><td>Java 8</td></tr>
+<tr><td>Pattern matching</td><td>Scala</td><td>Java 17–21</td></tr>
+<tr><td>Records</td><td>Kotlin/Scala case classes</td><td>Java 16</td></tr>
+<tr><td>Sealed types</td><td>Scala/Kotlin</td><td>Java 17</td></tr>
+<tr><td>Virtual threads</td><td>Kotlin coroutines / Go goroutines</td><td>Java 21</td></tr>
+<tr><td>Type inference</td><td>Scala/Kotlin</td><td>Java 10</td></tr>
+<tr><td>Modules</td><td>OSGi / Scala packaging</td><td>Java 9</td></tr>
+</tbody>
+</table>
+</div>
+<p>Java is basically saying:</p>
+<blockquote>
+<p>“We’ll adopt the good ideas, but we’ll do it safely.”</p>
+</blockquote>
+<hr>
+<h2 id="3-make-java-competitive-for-modern-workloads"><a class="header" href="#3-make-java-competitive-for-modern-workloads">3️⃣ <strong>Make Java competitive for modern workloads</strong></a></h2>
+<p>Oracle knows Java must compete with:</p>
+<ul>
+<li>Go (concurrency)</li>
+<li>Rust (performance)</li>
+<li>Node/TypeScript (developer experience)</li>
+<li>Kotlin (modern JVM apps)</li>
+<li>Python (data science)</li>
+</ul>
+<p>So they’re pushing three huge projects:</p>
+<h3 id="project-loom"><a class="header" href="#project-loom"><strong>Project Loom</strong></a></h3>
+<p>Virtual threads → Java becomes competitive with Go and Kotlin for concurrency.</p>
+<h3 id="project-valhalla"><a class="header" href="#project-valhalla"><strong>Project Valhalla</strong></a></h3>
+<p>Value types → Java gets zero‑overhead abstractions, better generics, faster memory layout.</p>
+<h3 id="project-panama"><a class="header" href="#project-panama"><strong>Project Panama</strong></a></h3>
+<p>Native interop → Java can call C libraries without JNI pain.</p>
+<p>These are <em>massive</em> upgrades.</p>
+<hr>
+<h2 id="4-keep-java-the-enterprise-backbone-while-jvm-stays-polyglot"><a class="header" href="#4-keep-java-the-enterprise-backbone-while-jvm-stays-polyglot">4️⃣ <strong>Keep Java the “enterprise backbone” while JVM stays polyglot</strong></a></h2>
+<p>Oracle knows Java will never be the only JVM language again.<br>And they’re fine with that.</p>
+<p>Their plan is:</p>
+<blockquote>
+<p>“Java is the stable foundation.<br>The JVM is the innovation playground.”</p>
+</blockquote>
+<p>This is why:</p>
+<ul>
+<li>Kotlin thrives</li>
+<li>Scala thrives</li>
+<li>Groovy thrives</li>
+<li>Clojure thrives</li>
+<li>GraalVM enables polyglot runtimes</li>
+</ul>
+<p>Oracle doesn’t want to kill JVM diversity — they want to <strong>anchor it</strong>.</p>
+<hr>
+<h1 id="-so-did-scala-force-javas-hand"><a class="header" href="#-so-did-scala-force-javas-hand">🧠 So did Scala force Java’s hand?</a></h1>
+<p><strong>Yes — absolutely.</strong></p>
+<p>Scala showed:</p>
+<ul>
+<li>Java’s verbosity was unnecessary</li>
+<li>FP made concurrency safer</li>
+<li>Type inference made code cleaner</li>
+<li>Pattern matching made logic clearer</li>
+<li>Immutability reduced bugs</li>
+<li>Actors solved real-world concurrency problems</li>
+</ul>
+<p>Java had to respond.</p>
+<p>But Java responded in a “Java way”:</p>
+<ul>
+<li>slower</li>
+<li>safer</li>
+<li>more conservative</li>
+<li>more backward-compatible</li>
+</ul>
+<p>Java didn’t try to <em>become</em> Scala.<br>Java tried to <strong>absorb the parts of Scala that fit Java’s philosophy</strong>.</p>
+<hr>
+<h1 id="-the-real-middle-ground"><a class="header" href="#-the-real-middle-ground">🎯 The real middle ground</a></h1>
+<p>Here’s the truth:</p>
+<h3 id="java-is-becoming-more-modern"><a class="header" href="#java-is-becoming-more-modern"><strong>Java is becoming more modern.</strong></a></h3>
+<h3 id="kotlin-is-becoming-the-developer-friendly-java"><a class="header" href="#kotlin-is-becoming-the-developer-friendly-java"><strong>Kotlin is becoming the “developer-friendly Java.”</strong></a></h3>
+<h3 id="scala-remains-the-power-user-jvm-language"><a class="header" href="#scala-remains-the-power-user-jvm-language"><strong>Scala remains the “power-user JVM language.”</strong></a></h3>
+<h3 id="groovy-remains-the-dynamic-jvm-language"><a class="header" href="#groovy-remains-the-dynamic-jvm-language"><strong>Groovy remains the “dynamic JVM language.”</strong></a></h3>
+<h3 id="clojure-remains-the-functional-purist"><a class="header" href="#clojure-remains-the-functional-purist"><strong>Clojure remains the “functional purist.”</strong></a></h3>
+<h3 id="graalvm-makes-the-jvm-polyglot"><a class="header" href="#graalvm-makes-the-jvm-polyglot"><strong>GraalVM makes the JVM polyglot.</strong></a></h3>
+<p>The middle ground isn’t a single language.</p>
+<p><strong>The middle ground is the JVM itself.</strong></p>
+<p>Java is the stable core.<br>Other languages innovate around it.<br>Oracle embraces this ecosystem instead of fighting it.</p>
+<hr>
+<h1 id="-my-prediction"><a class="header" href="#-my-prediction">🔮 My prediction</a></h1>
+<p>Oracle’s plan is clear:</p>
+<h3 id="-java-will-continue-adopting-modern-features"><a class="header" href="#-java-will-continue-adopting-modern-features">✔️ Java will continue adopting modern features</a></h3>
+<p>…but always in a conservative, enterprise-safe way.</p>
+<h3 id="-java-will-never-become-kotlin-or-scala"><a class="header" href="#-java-will-never-become-kotlin-or-scala">✔️ Java will never become Kotlin or Scala</a></h3>
+<p>…but it will keep borrowing their best ideas.</p>
+<h3 id="-the-jvm-will-remain-polyglot"><a class="header" href="#-the-jvm-will-remain-polyglot">✔️ The JVM will remain polyglot</a></h3>
+<p>…and Oracle will support that through GraalVM and stable bytecode evolution.</p>
+<h3 id="-java-will-remain-the-boring-but-reliable-backbone"><a class="header" href="#-java-will-remain-the-boring-but-reliable-backbone">✔️ Java will remain the “boring but reliable backbone”</a></h3>
+<p>…and that’s exactly why enterprises will keep using it.</p>
+<hr>
+<p>Luis, if you want, I can go deeper into:</p>
+<ul>
+<li><strong>What features Java will likely adopt next</strong></li>
+<li><strong>What features Java will never adopt</strong></li>
+<li><strong>How Oracle views Kotlin and Scala strategically</strong></li>
+<li><strong>How Java’s modernization compares to TypeScript’s evolution</strong></li>
+<li><strong>A timeline of Java’s modernization from Java 8 → Java 21 → Java 30</strong></li>
+</ul>
+<p>Just tell me which angle you want to explore.</p>
+<hr><div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-9"><a href="#question-9" class="header">Question 9</a></h1>
+<p><em>Let’s predict a bit into the future with your crystal ball… Tell me about which features will and which ones won’t adopt Oracle in the short term for Java</em></p>
+<hr>
+<p>I’ll synthesize a short-term prediction (next ~1–3 years) of <strong>which language/runtime features Oracle is likely to adopt into Java</strong> and <strong>which they probably will not</strong>, grounded in recent Java evolution and Oracle’s public roadmap priorities. I’ll state the reasoning for each prediction and practical implications for teams.</p>
+<hr>
+<h3 id="quick-verdict-short-summary"><a class="header" href="#quick-verdict-short-summary">Quick verdict (short summary)</a></h3>
+<ul>
+<li><strong>Likely to be adopted or expanded (short term)</strong>: <strong>Virtual threads (Loom rollout), pattern matching enhancements, records/compact data modeling, sealed types, improved type inference, continued work on Project Valhalla primitives, and better native interop via Panama.</strong></li>
+<li><strong>Unlikely in the short term</strong>: full-blown algebraic data types (as in Scala), pervasive union/union types like TypeScript, radical syntax changes (significant new syntactic sugar), full dependent types or HKT-first generics, and replacing the JVM with a new runtime model.</li>
+<li><strong>Wildcards / conditional</strong>: aggressive metaprogramming (macros), built-in immutability-by-default, or full coroutine-style structured concurrency beyond virtual threads — possible but only in conservative, backward-compatible forms.</li>
+</ul>
+<hr>
+<h2 id="why-this-split-makes-sense"><a class="header" href="#why-this-split-makes-sense">Why this split makes sense</a></h2>
+<p>Oracle’s public strategy balances <strong>modernization</strong> with <strong>extreme backward compatibility</strong> and enterprise stability. They prioritize features that:</p>
+<ul>
+<li>improve performance or memory model without breaking existing code,</li>
+<li>reduce common boilerplate in a conservative way (records, <code>var</code>),</li>
+<li>and address major platform gaps (concurrency, native interop, value types).</li>
+</ul>
+<p>They avoid features that would <strong>change the mental model of Java</strong> or risk breaking huge codebases (radical syntax, wholesale type-system rewrites).</p>
+<hr>
+<h2 id="features-oracle-will-likely-adopt-or-expand-13-year-horizon"><a class="header" href="#features-oracle-will-likely-adopt-or-expand-13-year-horizon">Features Oracle will likely adopt or expand (1–3 year horizon)</a></h2>
+<h3 id="1-virtual-threads-project-loom--continued-rollout-and-ecosystem-integration"><a class="header" href="#1-virtual-threads-project-loom--continued-rollout-and-ecosystem-integration">1. <strong>Virtual threads (Project Loom) — continued rollout and ecosystem integration</strong></a></h3>
+<p><strong>Why</strong>: Already in Java releases; solves scalability and concurrency pain without breaking APIs.<br><strong>What to expect</strong>: better tooling, libraries adopting virtual-thread-friendly APIs, clearer guidance for migration from thread pools, and more frameworks offering native support.<br><strong>Impact</strong>: Java becomes far more competitive for I/O-bound microservices and serverless cold-start patterns.</p>
+<hr>
+<h3 id="2-pattern-matching-and-richer-switch-expressions"><a class="header" href="#2-pattern-matching-and-richer-switch-expressions">2. <strong>Pattern matching and richer switch expressions</strong></a></h3>
+<p><strong>Why</strong>: Incremental, already shipping; improves expressiveness while preserving readability.<br><strong>What to expect</strong>: more exhaustive pattern matching forms, pattern matching for records, and better compiler diagnostics.<br><strong>Impact</strong>: Cleaner domain modeling and fewer ad-hoc instanceof checks.</p>
+<hr>
+<h3 id="3-records-and-compact-data-modeling"><a class="header" href="#3-records-and-compact-data-modeling">3. <strong>Records and compact data modeling</strong></a></h3>
+<p><strong>Why</strong>: Records are already in the language; they reduce boilerplate and are safe for enterprise use.<br><strong>What to expect</strong>: small enhancements (canonical constructors, better serialization support, integration with pattern matching).<br><strong>Impact</strong>: Easier DTOs and immutable-like data carriers without third-party libraries.</p>
+<hr>
+<h3 id="4-sealed-types-and-safer-adt-like-patterns-conservative"><a class="header" href="#4-sealed-types-and-safer-adt-like-patterns-conservative">4. <strong>Sealed types and safer ADT-like patterns (conservative)</strong></a></h3>
+<p><strong>Why</strong>: Sealed classes already exist; they enable safer hierarchies.<br><strong>What to expect</strong>: expanded ergonomics and compiler checks that make sealed hierarchies more practical for domain modeling.<br><strong>Impact</strong>: Safer APIs and clearer exhaustive handling in switches.</p>
+<hr>
+<h3 id="5-improved-local-type-inference-and-ergonomics"><a class="header" href="#5-improved-local-type-inference-and-ergonomics">5. <strong>Improved local type inference and ergonomics</strong></a></h3>
+<p><strong>Why</strong>: <code>var</code> exists; Oracle will expand inference carefully to reduce noise without losing clarity.<br><strong>What to expect</strong>: slightly broader inference in local contexts and better IDE support; not full type erasure or implicit typing everywhere.<br><strong>Impact</strong>: Less boilerplate in local code while preserving readable APIs.</p>
+<hr>
+<h3 id="6-project-valhalla-value-types--incremental-progress"><a class="header" href="#6-project-valhalla-value-types--incremental-progress">6. <strong>Project Valhalla (value types) — incremental progress</strong></a></h3>
+<p><strong>Why</strong>: Performance and memory layout improvements are high priority; Valhalla is a multi-release effort.<br><strong>What to expect</strong>: staged features (primitive classes, inline types) landing gradually; generics improvements that reduce boxing overhead.<br><strong>Impact</strong>: Faster collections, lower GC pressure, better numeric and data-structure performance.</p>
+<hr>
+<h3 id="7-project-panama-native-interop--pragmatic-improvements"><a class="header" href="#7-project-panama-native-interop--pragmatic-improvements">7. <strong>Project Panama (native interop) — pragmatic improvements</strong></a></h3>
+<p><strong>Why</strong>: Native interop is crucial for performance-sensitive workloads and cloud-native use.<br><strong>What to expect</strong>: more ergonomic foreign function APIs, safer memory access primitives, and better tooling for native images.<br><strong>Impact</strong>: Easier integration with C libraries and improved performance for native-bound workloads.</p>
+<hr>
+<h3 id="8-native-image--aot-support-improvements-graalvm-collaboration"><a class="header" href="#8-native-image--aot-support-improvements-graalvm-collaboration">8. <strong>Native image / AOT support improvements (GraalVM collaboration)</strong></a></h3>
+<p><strong>Why</strong>: Cloud and serverless demand fast startup and low memory. Oracle will support AOT workflows either directly or via collaboration.<br><strong>What to expect</strong>: clearer guidance, better compatibility with standard Java features, and smoother developer experience for native images.<br><strong>Impact</strong>: Java microservices with low cold-start times become more practical.</p>
+<hr>
+<h2 id="features-oracle-will-likely-not-adopt-in-the-short-term"><a class="header" href="#features-oracle-will-likely-not-adopt-in-the-short-term">Features Oracle will likely <em>not</em> adopt in the short term</a></h2>
+<h3 id="1-full-algebraic-data-types-adts-and-scala-style-type-system"><a class="header" href="#1-full-algebraic-data-types-adts-and-scala-style-type-system">1. <strong>Full algebraic data types (ADTs) and Scala-style type system</strong></a></h3>
+<p><strong>Why</strong>: Scala’s ADTs and advanced type features (e.g., implicits/typeclasses, HKT-heavy patterns) would require major type-system changes and risk breaking generics and libraries.<br><strong>Consequence</strong>: Java will keep adding sealed types and records but stop short of Scala-level type expressiveness.</p>
+<hr>
+<h3 id="2-union-types--structural-typing-like-typescript"><a class="header" href="#2-union-types--structural-typing-like-typescript">2. <strong>Union types / structural typing like TypeScript</strong></a></h3>
+<p><strong>Why</strong>: Java’s nominal typing and binary compatibility model make structural or union typing risky. Introducing union types would complicate overload resolution, generics, and existing APIs.<br><strong>Consequence</strong>: Java will prefer pattern matching and sealed hierarchies to cover many union-like use cases.</p>
+<hr>
+<h3 id="3-radical-syntax-overhaul-or-terse-dsl-first-syntax"><a class="header" href="#3-radical-syntax-overhaul-or-terse-dsl-first-syntax">3. <strong>Radical syntax overhaul or terse DSL-first syntax</strong></a></h3>
+<p><strong>Why</strong>: Oracle avoids syntax that would fragment the ecosystem or confuse large teams. Java’s readability and explicitness are deliberate.<br><strong>Consequence</strong>: No major syntactic sugar that changes how Java looks at a fundamental level.</p>
+<hr>
+<h3 id="4-macros-or-powerful-compile-time-metaprogramming-à-la-scala-macros-or-lisp-macros"><a class="header" href="#4-macros-or-powerful-compile-time-metaprogramming-à-la-scala-macros-or-lisp-macros">4. <strong>Macros or powerful compile-time metaprogramming (à la Scala macros or Lisp macros)</strong></a></h3>
+<p><strong>Why</strong>: Macros introduce complexity, brittle compile-time behavior, and potential binary incompatibilities. Oracle prefers annotation processors and limited compile-time tools.<br><strong>Consequence</strong>: Metaprogramming will remain conservative (annotation processors, limited code generation), not full macros.</p>
+<hr>
+<h3 id="5-dependent-types-full-hkt-first-generics-or-other-advanced-type-theory-features"><a class="header" href="#5-dependent-types-full-hkt-first-generics-or-other-advanced-type-theory-features">5. <strong>Dependent types, full HKT-first generics, or other advanced type-theory features</strong></a></h3>
+<p><strong>Why</strong>: These would dramatically increase language complexity and learning curve for the vast Java user base.<br><strong>Consequence</strong>: Java will continue incremental generics improvements (via Valhalla and other projects) but not a full rewrite.</p>
+<hr>
+<h2 id="conditional--uncertain-items-could-go-either-way-but-cautiously"><a class="header" href="#conditional--uncertain-items-could-go-either-way-but-cautiously">Conditional / uncertain items (could go either way, but cautiously)</a></h2>
+<h3 id="built-in-immutability-by-default"><a class="header" href="#built-in-immutability-by-default"><strong>Built-in immutability-by-default</strong></a></h3>
+<ul>
+<li><strong>Why it’s attractive</strong>: reduces bugs and concurrency issues.</li>
+<li><strong>Why it’s risky</strong>: breaks expectations and existing mutable-heavy APIs.</li>
+<li><strong>Prediction</strong>: Oracle will provide better immutable collections and patterns, but not flip the default mutability model.</li>
+</ul>
+<h3 id="structured-concurrency-beyond-virtual-threads"><a class="header" href="#structured-concurrency-beyond-virtual-threads"><strong>Structured concurrency beyond virtual threads</strong></a></h3>
+<ul>
+<li><strong>Why it’s attractive</strong>: safer concurrency patterns.</li>
+<li><strong>Why it’s risky</strong>: API and library churn.</li>
+<li><strong>Prediction</strong>: Java will adopt structured concurrency primitives in a conservative, opt-in manner (libraries and JEPs), not force a global model.</li>
+</ul>
+<h3 id="more-aggressive-metaprogramming-lightweight-macros-or-staged-compilation"><a class="header" href="#more-aggressive-metaprogramming-lightweight-macros-or-staged-compilation"><strong>More aggressive metaprogramming (lightweight macros or staged compilation)</strong></a></h3>
+<ul>
+<li><strong>Why it’s attractive</strong>: reduces boilerplate without runtime cost.</li>
+<li><strong>Why it’s risky</strong>: complexity and compatibility.</li>
+<li><strong>Prediction</strong>: Oracle may experiment in incubator modules or JEPs, but production adoption will be slow.</li>
+</ul>
+<hr>
+<h2 id="practical-advice-for-teams-short-term"><a class="header" href="#practical-advice-for-teams-short-term">Practical advice for teams (short term)</a></h2>
+<ol>
+<li><strong>Adopt virtual-thread-friendly designs now</strong> — frameworks and libraries will converge quickly; early adopters gain scalability benefits.</li>
+<li><strong>Prefer records and sealed types for new domain models</strong> — they’re stable and supported.</li>
+<li><strong>Plan for Valhalla</strong> — design hot-path data structures so they can benefit from value types later.</li>
+<li><strong>Use GraalVM/native images selectively</strong> — test compatibility early if you need fast startup.</li>
+<li><strong>Don’t expect Scala-level type features in Java</strong> — if you need them, keep using Scala/Kotlin for those modules.</li>
+<li><strong>Favor incremental migration</strong> — Java’s future features are evolutionary; design code to be forward-compatible (avoid brittle reflection-heavy hacks).</li>
+</ol>
+<hr>
+<h2 id="onepage-prediction-timeline-13-years"><a class="header" href="#onepage-prediction-timeline-13-years">One‑page prediction timeline (1–3 years)</a></h2>
+<ul>
+<li><strong>0–12 months</strong>: Virtual threads adoption, pattern matching refinements, records/compact constructors, better <code>var</code> ergonomics.</li>
+<li><strong>12–24 months</strong>: Continued Valhalla prototypes; Panama ergonomics improved; sealed types and pattern matching become more ergonomic.</li>
+<li><strong>24–36 months</strong>: More mature Valhalla features (inline/value classes) land in stages; stronger tooling for native images; structured concurrency libraries stabilize.</li>
+<li><strong>Beyond 36 months</strong>: Deeper generics/value-type integration, but still no Scala-level type-system overhaul or macros.</li>
+</ul>
+<hr>
+<h2 id="final-thought"><a class="header" href="#final-thought">Final thought</a></h2>
+<p>Oracle’s path is <strong>pragmatic modernization</strong>: they will keep absorbing proven ideas from the JVM ecosystem but always in a way that <strong>preserves compatibility and enterprise stability</strong>. If you want the most modern developer ergonomics today, <strong>Kotlin</strong> remains the fastest route; if you need advanced FP and type expressiveness, <strong>Scala</strong> remains the choice. Java will steadily close the gap on ergonomics and concurrency, but it will never fully become those languages — and that’s intentional.</p>
+<hr>
+<p>If you want, I can:</p>
+<ul>
+<li>produce a <strong>feature-by-feature comparison table</strong> (Java vs Kotlin vs Scala) showing which language already supports each feature and how Java’s roadmap maps to them, or</li>
+<li>sketch a <strong>migration checklist</strong> for a Java codebase to prepare for Loom/Valhalla/Panama. Which would you prefer next</li>
+</ul>
+<hr>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-09f2665d.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-609e4cb8.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
