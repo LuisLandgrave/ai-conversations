@@ -1,0 +1,408 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Question 5 - Java Bytecode Optimization and Virtual Machine Runtimes</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Talk about Java Bytecode Optimization and Virtual Machine Runtimes">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-e96d0476.css">
+        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-e2cb197d.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-7107c1cc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Java Bytecode Optimization and Virtual Machine Runtimes</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <p><em>Just as a bonus, because we’re talking about JVMs being more relevant over niche specializations… Can you compare today’s JVMs (and their JDKs, of course) to know which one is better to use for different use cases? I’m asking you this because I’ve got the feeling that, at some point in the last decade, it just became irrelevant and people just went to OpenJDK to avoid the licensing and any paywall instead of understanding the actual benefit of having a specific vendor implementation over another</em></p>
+<hr>
+<p>Luis, this is a <em>great</em> question — and honestly one of the most misunderstood parts of the Java ecosystem today. You’re absolutely right: sometime between 2014–2022, people stopped thinking about JVM <em>vendors</em> and just defaulted to “OpenJDK = Java,” mostly because of Oracle licensing drama. But under the surface, JVMs <strong>never stopped being different</strong>, and in 2026 those differences matter again — especially with GraalVM becoming part of Java 25, OpenJ9 still thriving, and Azul pushing GC innovation.</p>
+<p>So here’s the <strong>modern, fancy, clarity-first 🤓 comparison matrix</strong> showing which JVM/JDK is actually better for which use case.</p>
+<hr>
+<h1 id="-modern-jvm-comparison-matrix-2026"><a class="header" href="#-modern-jvm-comparison-matrix-2026">🧠 <strong>Modern JVM Comparison Matrix (2026)</strong></a></h1>
+<h3 id="-which-jvm-should-i-use-today--and-why"><a class="header" href="#-which-jvm-should-i-use-today--and-why">🤓 <em>“Which JVM should I use today — and why?”</em></a></h3>
+<hr>
+<h2 id="-high-level-summary-the-tldr"><a class="header" href="#-high-level-summary-the-tldr">🌐 <strong>High-Level Summary (the TL;DR)</strong></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>JVM / JDK</th><th>Best For</th><th>Why It Matters</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>OpenJDK / HotSpot</strong></td><td>General-purpose, enterprise, cloud</td><td>Fast JIT, stable, universal compatibility, reference implementation</td></tr>
+<tr><td><strong>GraalVM (Java 25+)</strong></td><td>Microservices, CLIs, native binaries, startup-critical apps</td><td>AOT native-image, polyglot, symbol obfuscation, tiny footprint</td></tr>
+<tr><td><strong>Eclipse OpenJ9</strong></td><td>Memory-constrained servers, fast startup, cloud density</td><td>Lower RAM usage, faster startup, balanced GC</td></tr>
+<tr><td><strong>Azul Zing / Prime</strong></td><td>Ultra-low latency, high-throughput trading systems</td><td>C4 pauseless GC, predictable latency</td></tr>
+<tr><td><strong>Liberica / Amazon Corretto / Red Hat builds</strong></td><td>Enterprise support, long-term stability</td><td>Vendor support, security patches, predictable release cycles</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h1 id="-fancy-visual-matrix-emoji-coded"><a class="header" href="#-fancy-visual-matrix-emoji-coded">🎨 <strong>Fancy Visual Matrix (Emoji-coded)</strong></a></h1>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Use Case</th><th>Best JVM</th><th>Why</th></tr>
+</thead>
+<tbody>
+<tr><td>☁️ <strong>Cloud Microservices</strong></td><td><strong>GraalVM native-image</strong></td><td>Fast startup, tiny memory, perfect for serverless</td></tr>
+<tr><td>🏢 <strong>Enterprise Backend</strong></td><td><strong>OpenJDK / HotSpot</strong></td><td>Stability, tooling, ecosystem compatibility</td></tr>
+<tr><td>📉 <strong>Low-Latency Trading / Fintech</strong></td><td><strong>Azul Zing</strong></td><td>Pauseless GC, predictable latency</td></tr>
+<tr><td>🧠 <strong>Memory-Constrained Deployments</strong></td><td><strong>OpenJ9</strong></td><td>Lower RAM footprint, efficient GC</td></tr>
+<tr><td>🛠️ <strong>Embedded / IoT Java</strong></td><td><strong>GraalVM native-image + JLink</strong></td><td>Small footprint, static binaries</td></tr>
+<tr><td>🧪 <strong>Framework / Agent Development</strong></td><td><strong>HotSpot</strong></td><td>Best debugging, instrumentation, JFR</td></tr>
+<tr><td>🔐 <strong>Security-Sensitive JVM Apps</strong></td><td><strong>HotSpot + Zelix</strong></td><td>Strong obfuscation + stable runtime</td></tr>
+<tr><td>📱 <strong>Android (ART)</strong></td><td><strong>ART (not JVM)</strong></td><td>Ahead-of-time dex compilation</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h1 id="-deep-dive-what-actually-differentiates-jvms-in-2026"><a class="header" href="#-deep-dive-what-actually-differentiates-jvms-in-2026">🧩 <strong>Deep-Dive: What Actually Differentiates JVMs in 2026?</strong></a></h1>
+<h2 id="1-jit-compiler-strategy"><a class="header" href="#1-jit-compiler-strategy">1. <strong>JIT Compiler Strategy</strong></a></h2>
+<h3 id="hotspot-openjdk"><a class="header" href="#hotspot-openjdk">HotSpot (OpenJDK)</a></h3>
+<ul>
+<li>C2 + tiered compilation</li>
+<li>Best peak throughput</li>
+<li>Most mature optimizations</li>
+<li>Ideal for long-running server apps</li>
+</ul>
+<h3 id="openj9"><a class="header" href="#openj9">OpenJ9</a></h3>
+<ul>
+<li>More aggressive early optimization</li>
+<li>Faster startup</li>
+<li>Lower memory footprint</li>
+<li>Ideal for cloud density (more containers per node)</li>
+</ul>
+<h3 id="graalvm-jit"><a class="header" href="#graalvm-jit">GraalVM JIT</a></h3>
+<ul>
+<li>High-level IR</li>
+<li>Better optimization for polyglot workloads</li>
+<li>Optional replacement for C2</li>
+<li>But native-image is the real star</li>
+</ul>
+<h3 id="azul-zing"><a class="header" href="#azul-zing">Azul Zing</a></h3>
+<ul>
+<li>Specialized for ultra-low latency</li>
+<li>C4 GC eliminates stop-the-world pauses</li>
+<li>Used in trading, HFT, real-time analytics</li>
+</ul>
+<hr>
+<h2 id="2-garbage-collection-philosophy"><a class="header" href="#2-garbage-collection-philosophy">2. <strong>Garbage Collection Philosophy</strong></a></h2>
+<h3 id="hotspot"><a class="header" href="#hotspot">HotSpot</a></h3>
+<ul>
+<li>ZGC (sub-millisecond pauses)</li>
+<li>Shenandoah (low-pause concurrent GC)</li>
+<li>G1 (balanced default)</li>
+</ul>
+<h3 id="openj9-1"><a class="header" href="#openj9-1">OpenJ9</a></h3>
+<ul>
+<li>Balanced GC</li>
+<li>Metronome-like tuning</li>
+<li>Lower memory overhead</li>
+</ul>
+<h3 id="azul-zing-1"><a class="header" href="#azul-zing-1">Azul Zing</a></h3>
+<ul>
+<li>C4 GC (continuous concurrent compaction)</li>
+<li>Zero pauses</li>
+<li>Predictable latency</li>
+</ul>
+<h3 id="graalvm-native-image"><a class="header" href="#graalvm-native-image">GraalVM native-image</a></h3>
+<ul>
+<li>No GC (static memory model)</li>
+<li>Perfect for microservices and CLIs</li>
+<li>Not ideal for long-lived, dynamic workloads</li>
+</ul>
+<hr>
+<h2 id="3-startup-time--footprint"><a class="header" href="#3-startup-time--footprint">3. <strong>Startup Time &amp; Footprint</strong></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>JVM</th><th>Startup</th><th>Memory</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>GraalVM native-image</strong></td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>Best for serverless, CLIs</td></tr>
+<tr><td><strong>OpenJ9</strong></td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>Great for cloud density</td></tr>
+<tr><td><strong>HotSpot</strong></td><td>⭐⭐</td><td>⭐⭐</td><td>Good enough for most apps</td></tr>
+<tr><td><strong>Azul Zing</strong></td><td>⭐⭐</td><td>⭐⭐⭐</td><td>Optimized for latency, not startup</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="4-ecosystem--tooling"><a class="header" href="#4-ecosystem--tooling">4. <strong>Ecosystem &amp; Tooling</strong></a></h2>
+<h3 id="hotspot-1"><a class="header" href="#hotspot-1">HotSpot</a></h3>
+<ul>
+<li>Best debugging</li>
+<li>Best profiling (JFR)</li>
+<li>Best IDE support</li>
+<li>Most stable for frameworks (Spring, Quarkus, Micronaut)</li>
+</ul>
+<h3 id="graalvm"><a class="header" href="#graalvm">GraalVM</a></h3>
+<ul>
+<li>Polyglot (Python, JS, R, LLVM IR)</li>
+<li>Native-image for deployment</li>
+<li>Ideal for modern microservice architectures</li>
+</ul>
+<h3 id="openj9-2"><a class="header" href="#openj9-2">OpenJ9</a></h3>
+<ul>
+<li>Fully compatible with OpenJDK</li>
+<li>Slightly less tooling support</li>
+<li>But excellent for cloud cost reduction</li>
+</ul>
+<h3 id="azul"><a class="header" href="#azul">Azul</a></h3>
+<ul>
+<li>Commercial support</li>
+<li>Specialized for latency-critical workloads</li>
+</ul>
+<hr>
+<h1 id="-so-is-jvm-choice-still-relevant-in-2026"><a class="header" href="#-so-is-jvm-choice-still-relevant-in-2026">🧭 <strong>So… is JVM choice still relevant in 2026?</strong></a></h1>
+<h3 id="-yes--but-only-if-your-workload-has-specific-needs"><a class="header" href="#-yes--but-only-if-your-workload-has-specific-needs">✔ <strong>YES — but only if your workload has specific needs.</strong></a></h3>
+<p>Most developers default to <strong>OpenJDK</strong> because it’s free, stable, and universal.<br>But if you care about:</p>
+<ul>
+<li>startup time → GraalVM</li>
+<li>memory footprint → OpenJ9</li>
+<li>latency → Azul Zing</li>
+<li>polyglot → GraalVM</li>
+<li>embedded → GraalVM + JLink</li>
+<li>enterprise support → Corretto / Liberica / Red Hat</li>
+<li>security → HotSpot + obfuscation tools</li>
+</ul>
+<p>…then JVM choice absolutely matters.</p>
+<h3 id="-the-all-jvms-are-the-same-era-was-a-myth-created-by-licensing-drama"><a class="header" href="#-the-all-jvms-are-the-same-era-was-a-myth-created-by-licensing-drama">✔ <strong>The “all JVMs are the same” era was a myth created by licensing drama.</strong></a></h3>
+<p>Technically, JVMs diverged more in the last decade than ever before — especially with GraalVM entering the mainstream.</p>
+<hr>
+<h1 id="-final-synthesis-luis-edition-"><a class="header" href="#-final-synthesis-luis-edition-">🏁 <strong>Final Synthesis (Luis Edition 🤓)</strong></a></h1>
+<ul>
+<li><strong>OpenJDK/HotSpot</strong> → the safe, universal default</li>
+<li><strong>GraalVM native-image</strong> → the modern disruptor</li>
+<li><strong>OpenJ9</strong> → the cloud-efficiency specialist</li>
+<li><strong>Azul Zing</strong> → the latency king</li>
+<li><strong>Vendor JDKs (Corretto, Liberica, Red Hat)</strong> → enterprise stability</li>
+<li><strong>Android ART</strong> → not a JVM, but part of the same lineage</li>
+</ul>
+<p>Choosing a JVM is no longer irrelevant — it’s a strategic decision tied to performance, cost, and deployment architecture.</p>
+<hr>
+<p>If you want, I can also build:</p>
+<ul>
+<li>a <strong>tier list</strong> ranking JVMs by category,</li>
+<li>a <strong>flowchart</strong> that picks the right JVM based on your workload,</li>
+<li>or a <strong>visual map</strong> of the JVM ecosystem from 1997 → 2026.</li>
+</ul>
+<p>Just tell me which one you want next 🤓</p>
+<hr>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="04.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="06.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="04.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="06.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-09f2665d.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-609e4cb8.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
