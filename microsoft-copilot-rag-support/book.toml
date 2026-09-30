@@ -1,0 +1,21 @@
+[book]
+title = "Microsoft Copilot Retrieval-Augmented Generation Support"
+authors = ["Luis Landgrave", "Microsoft Copilot"]
+description = "Talk about Microsoft's Copilot support for Retrieval-Augmented Generation"
+
+[rust]
+edition = "2024"
+
+[build]
+build-dir = "build"
+create-missing = true
+
+[preprocessor.index]
+
+[preprocessor.links]
+
+[output.html]
+additional-css = ["src/custom.css"]
+
+[output.html.search]
+#limit-results = 15
