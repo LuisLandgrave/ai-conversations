@@ -1,0 +1,21 @@
+[book]
+title = "Database Persistence Evolution"
+authors = ["Luis Landgrave", "Microsoft Copilot"]
+description = "Talk about Database Persistence Evolution"
+
+[rust]
+edition = "2024"
+
+[build]
+build-dir = "build"
+create-missing = true
+
+[preprocessor.index]
+
+[preprocessor.links]
+
+[output.html]
+additional-css = ["src/custom.css"]
+
+[output.html.search]
+#limit-results = 15
