@@ -4,6 +4,7 @@ Conversations with AI that I find interesting enough to share
 
 ---
 
+- 2026/10/23 [From AI Hype to Agentic Reality](from-ai-hype-to-agentic-reality\build\index.html)
 - 2026/10/19 [Database Persistence Evolution](database-persistence-evolution\build\index.html)
 
 - 2026/09/29 [Microsoft Copilot Retrieval-Augmented Generation Support](microsoft-copilot-rag-support\build\index.html)
