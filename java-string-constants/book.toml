@@ -1,0 +1,21 @@
+[book]
+title = "Java String Constants: Maintainability Over Deduplication"
+authors = ["Luis Landgrave", "Microsoft Copilot"]
+description = "A practical discussion about why duplicated text is not always duplicated knowledge, and when extracting Java strings into constants improves or harms maintainability."
+
+[rust]
+edition = "2024"
+
+[build]
+build-dir = "build"
+create-missing = true
+
+[preprocessor.index]
+
+[preprocessor.links]
+
+[output.html]
+additional-css = ["src/custom.css"]
+
+[output.html.search]
+#limit-results = 15

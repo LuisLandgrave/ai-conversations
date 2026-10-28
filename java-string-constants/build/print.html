@@ -1,0 +1,2656 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Java String Constants: Maintainability Over Deduplication</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="A practical discussion about why duplicated text is not always duplicated knowledge, and when extracting Java strings into constants improves or harms maintainability.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-e96d0476.css">
+        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="src/custom-76ba0931.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-3b7c0201.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-30ef4105.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Java String Constants: Maintainability Over Deduplication</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="summary"><a class="header" href="#summary">Summary</a></h1>
+<p>We started with a broad question about Java string handling, but quickly narrowed it to the more interesting architectural issue: <strong>how string literals should be declared, organized, reused, and maintained</strong>. The discussion ultimately separated source-code duplication from duplicated knowledge and concluded that maintainability, not literal deduplication, should drive the design.</p>
+<h2 id="1-general-string-handling-practices"><a class="header" href="#1-general-string-handling-practices">1. General string-handling practices</a></h2>
+<p>We first covered the conventional differences between <code>String</code>, <code>StringBuilder</code>, and <code>StringBuffer</code>. The practical guidance was to use <code>String</code> by default, reserve <code>StringBuilder</code> for repeated construction such as concatenation inside loops, and use <code>StringBuffer</code> only when its synchronization is genuinely needed.</p>
+<p>We also reviewed familiar practices such as comparing strings with <code>equals()</code>, using null-safe comparisons, precompiling frequently used regular expressions, using parameterized logging, and avoiding manually concatenated SQL or JSON. However, this turned out not to be the real problem you wanted to explore.</p>
+<h2 id="2-the-problem-with-putting-every-literal-in-a-constants-class"><a class="header" href="#2-the-problem-with-putting-every-literal-in-a-constants-class">2. The problem with putting every literal in a constants class</a></h2>
+<p>You clarified that your concern was not string manipulation, but <strong>declaration and organization</strong>. SonarQube may recommend extracting repeated literals, but placing all of them in a global <code>Constants</code> or <code>Strings</code> utility class creates a different maintainability problem: a large, unstructured collection with unclear ownership.</p>
+<p>We considered organizing constants by context instead, such as <code>ApiHeaders</code>, <code>JsonFields</code>, <code>DatabaseColumns</code>, or domain-specific vocabulary classes. We also established that not every repeated literal deserves extraction. A constant should generally add meaning or represent shared knowledge, rather than merely give a second name to obvious text.</p>
+<h2 id="3-case-and-formatting-variants-expose-the-limits-of-constants"><a class="header" href="#3-case-and-formatting-variants-expose-the-limits-of-constants">3. Case and formatting variants expose the limits of constants</a></h2>
+<p>You then introduced variants such as:</p>
+<pre><code class="language-Java">- "active"
+- "ACTIVE"
+- "Active"
+- "is active"
+- "is_active"
+- "IsActive"
+- "IS_ACTIVE"
+</code></pre>
+<p>This demonstrates why constants and enums are not universal solutions. If identifiers are named after their representations, names such as <code>ACTIVE_LOWER</code>, <code>ACTIVE_TITLE</code>, <code>IS_ACTIVE_1</code>, and <code>IS_ACTIVE_2</code> quickly become awkward and arbitrary.</p>
+<p>We distinguished representation variants from genuinely different contracts. For example, <code>isActive</code> in JSON, <code>is_active</code> in a database, and <code>Is Active</code> in a user interface may look related but belong to separate contexts. If they must be centralized, their identifiers should describe their role, such as <code>JSON_IS_ACTIVE</code>, <code>DB_IS_ACTIVE</code>, and <code>LABEL_IS_ACTIVE</code>, rather than merely describing capitalization.</p>
+<h2 id="4-a-strings-class-with-identifiers-matching-their-values"><a class="header" href="#4-a-strings-class-with-identifiers-matching-their-values">4. A <code>Strings</code> class with identifiers matching their values</a></h2>
+<p>You proposed a more direct vocabulary:</p>
+<pre><code class="language-Java">public class Strings {
+    public final String active = "active";
+    public final String ACTIVE = "ACTIVE";
+    public final String Active = "Active";
+}
+</code></pre>
+<p>The idea is understandable because the identifier mirrors the value, autocomplete works as a dictionary, and there is little conceptual indirection. If implemented, the fields should at least be <code>static final</code>, since creating identical fields for every instance provides no benefit.</p>
+<p>The fundamental problem is that Java identifiers cannot faithfully represent every possible string. Both <code>"is active"</code> and <code>"is_active"</code> might naturally map to <code>is_active</code>, causing a collision. Once suffixes or formatting descriptions are introduced to resolve those collisions, the approach loses much of its original naturalness.</p>
+<h2 id="5-classifying-strings-by-what-they-represent"><a class="header" href="#5-classifying-strings-by-what-they-represent">5. Classifying strings by what they represent</a></h2>
+<p>We stepped back and treated strings according to purpose rather than syntax. User-visible text belongs in resource bundles or another localization system. Configuration belongs in properties, YAML, environment variables, or typed configuration objects. Protocol tokens, JSON names, headers, and database identifiers may belong in narrowly scoped contract classes.</p>
+<p>Domain states may be represented by enums or value objects when type safety is valuable, while simple local literals can remain inline. This avoids treating every string as though it belonged to one universal category and prevents the creation of a giant global string registry.</p>
+<h2 id="6-building-phrases-from-atomic-word-constants"><a class="header" href="#6-building-phrases-from-atomic-word-constants">6. Building phrases from atomic word constants</a></h2>
+<p>You proposed declaring individual words:</p>
+<pre><code class="language-Java">String is = "is";
+String active = "active";
+</code></pre>
+<p>and composing phrases with a delimiter:</p>
+<pre><code class="language-Java">String.join(SPACE, is, active);
+</code></pre>
+<p>This can be a legitimate pattern for machine-oriented text, especially generated identifiers, paths, keys, queries, or small domain-specific languages. For example, composing <code>customer</code>, <code>address</code>, and <code>city</code> with dots or underscores can be systematic and useful.</p>
+<p>It is less suitable for natural language. Human languages differ in word order, agreement, plurality, punctuation, and grammar, so translating individual words and joining them mechanically does not reliably produce correct messages. Human-facing phrases should normally be externalized as complete messages, while technical identifiers may be safely composed from smaller tokens.</p>
+<h2 id="7-whether-repeated-inline-strings-are-inherently-bad"><a class="header" href="#7-whether-repeated-inline-strings-are-inherently-bad">7. Whether repeated inline strings are inherently bad</a></h2>
+<p>We then returned to the central concern: if a string appears in several places, is leaving it inline necessarily poor practice? The answer was no. Literal duplication is not automatically equivalent to duplicated knowledge.</p>
+<p>A repeated HTTP header, serialization key, or external protocol token usually represents one decision that must change consistently, so centralizing it can improve maintainability. Conversely, the same word appearing in several independent logs or local comparisons may simply be repeated text. Extracting it can introduce naming, importing, navigation, and organizational costs without producing a meaningful abstraction.</p>
+<h2 id="8-treating-sonarqube-as-an-adviser-rather-than-an-authority"><a class="header" href="#8-treating-sonarqube-as-an-adviser-rather-than-an-authority">8. Treating SonarQube as an adviser rather than an authority</a></h2>
+<p>The strongest practical conclusion was that SonarQube’s duplicate-string warning should be treated as a <strong>review prompt</strong>, not an unconditional command. Static analysis can detect matching characters, but it cannot always determine whether those occurrences represent the same concept, contract, or maintenance responsibility.</p>
+<p>A useful test is:</p>
+<blockquote>
+<p>If this value changes, should all of these occurrences necessarily change together?</p>
+</blockquote>
+<p>If yes, there is probably duplicated knowledge and a named abstraction may help. If no, extracting the literal may create false coupling. A mature quality profile can therefore retain high-value correctness and security rules while relaxing or lowering the severity of stylistic rules that repeatedly encourage worse designs.</p>
+<h2 id="9-how-other-programming-language-communities-approach-it"><a class="header" href="#9-how-other-programming-language-communities-approach-it">9. How other programming-language communities approach it</a></h2>
+<p>We considered Java alongside C#, Python, JavaScript, TypeScript, Go, and Rust. These communities differ in syntax and type systems, but none generally treats every repeated string literal as something that must be deduplicated. Dynamic object literals and dictionaries may make vocabularies feel more natural in JavaScript or Python, while enums and stronger types are more common in Rust and TypeScript.</p>
+<p>Across languages, the broader tendency is to centralize shared meaning, contracts, configuration, and domain concepts rather than blindly deduplicating text. Ordinary local literals are widely accepted when they remain understandable and do not create a coordinated-change risk.</p>
+<h2 id="10-java-and-openjdks-actual-direction"><a class="header" href="#10-java-and-openjdks-actual-direction">10. Java and OpenJDK’s actual direction</a></h2>
+<p>Finally, we examined whether Java itself appears to regard source-level string duplication as a language problem. Java has invested in strings, but primarily in runtime efficiency, representation, composition, and readability. Examples include automatic string deduplication in G1, Compact Strings, optimized concatenation, and text blocks.</p>
+<p>String templates were explored as a way to improve composition, validation, and embedded expressions, although that proposal was withdrawn rather than becoming the answer to constant organization. We found no apparent OpenJDK roadmap item for automatic named string vocabularies or Sonar-style source-literal deduplication.</p>
+<h2 id="final-conclusion"><a class="header" href="#final-conclusion">Final conclusion</a></h2>
+<p>Our conclusion was not that constants are useless or that strings should always be scattered freely. It was that <strong>deduplication should follow semantics and maintenance responsibility, not textual equality</strong>.</p>
+<p>A practical policy would be:</p>
+<ul>
+<li>Keep local, obvious, independent literals inline.</li>
+<li>Centralize strings that represent shared contracts or coordinated decisions.</li>
+<li>Externalize user-facing messages for localization.</li>
+<li>Use configuration mechanisms for environment-dependent values.</li>
+<li>Introduce enums or value objects when type safety genuinely simplifies the domain.</li>
+<li>Avoid universal <code>Constants</code> or <code>Strings</code> dumping grounds.</li>
+<li>Treat SonarQube’s duplicate-string finding as a question requiring judgment, not as proof of defective code.</li>
+</ul>
+<p>In its shortest form:</p>
+<blockquote>
+<p><strong>Repeat text when repetition is harmless; remove duplicated knowledge when the copies must evolve together.</strong></p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<pre><code>Help me find out the best way to handle Strings in Java.
+I already have a few ideas, but I want to know what's the best practice, real-world scenarios, SonarQube compliant solutions, etc. you can give me
+</code></pre>
+<hr>
+<p>If you’re aiming for <strong>real-world Java</strong>, <strong>clean code</strong>, and <strong>SonarQube compliance</strong>, the biggest mindset shift is:</p>
+<blockquote>
+<p><strong>Don’t optimize strings prematurely. Optimize based on usage patterns.</strong></p>
+</blockquote>
+<p>A lot of Java string advice is 15+ years old and no longer fully applies on modern JVMs.</p>
+<h1 id="1-understand-the-3-main-types"><a class="header" href="#1-understand-the-3-main-types">1. Understand the 3 Main Types</a></h1>
+<h2 id="string"><a class="header" href="#string">String</a></h2>
+<p>Immutable.</p>
+<pre><code class="language-java">String name = "Luis";
+name = name + " Garcia";
+</code></pre>
+<p>Every modification creates a new String.</p>
+<p>Use when:</p>
+<ul>
+<li>Value rarely changes</li>
+<li>DTOs</li>
+<li>Configuration values</li>
+<li>Method parameters</li>
+<li>Return values</li>
+<li>Domain objects</li>
+</ul>
+<p>✅ Default choice</p>
+<hr>
+<h2 id="stringbuilder"><a class="header" href="#stringbuilder">StringBuilder</a></h2>
+<p>Mutable.</p>
+<pre><code class="language-java">StringBuilder sb = new StringBuilder();
+sb.append("Hello");
+sb.append(" ");
+sb.append("World");
+String result = sb.toString();
+</code></pre>
+<p>Use when:</p>
+<ul>
+<li>Building text incrementally</li>
+<li>Loops</li>
+<li>CSV generation</li>
+<li>SQL construction</li>
+<li>Log message construction</li>
+</ul>
+<p>✅ Preferred for repeated modifications</p>
+<hr>
+<h2 id="stringbuffer"><a class="header" href="#stringbuffer">StringBuffer</a></h2>
+<p>Thread-safe version of StringBuilder.</p>
+<pre><code class="language-java">StringBuffer sb = new StringBuffer();
+</code></pre>
+<p>Use only when:</p>
+<ul>
+<li>Multiple threads truly share the same buffer</li>
+</ul>
+<p>In modern code this is uncommon.</p>
+<p>✅ Rarely needed today</p>
+<p>Sonar also generally prefers <code>StringBuilder</code> when synchronization isn’t required. <a href="https://stackoverflow.com/questions/38877546/sonar-complains-use-stringbuilder-instead-of-stringbuffer">[stackoverflow.com]</a>, <a href="https://community.sonarsource.com/t/s1643-false-positive-use-a-stringbuilder-instead-when-using-api-that-consumes-string-in-a-loop/120840">[community….source.com]</a></p>
+<hr>
+<h1 id="2-modern-best-practice-string-concatenation"><a class="header" href="#2-modern-best-practice-string-concatenation">2. Modern Best Practice: String Concatenation</a></h1>
+<h2 id="good"><a class="header" href="#good">Good</a></h2>
+<pre><code class="language-java">String message = firstName + " " + lastName;
+</code></pre>
+<p>For small concatenations:</p>
+<pre><code class="language-java">String title = "User: " + username;
+</code></pre>
+<p>Modern JVMs optimize this very effectively.</p>
+<h3 id="dont-write"><a class="header" href="#dont-write">Don’t write</a></h3>
+<pre><code class="language-java">StringBuilder sb = new StringBuilder();
+sb.append(firstName);
+sb.append(" ");
+sb.append(lastName);
+</code></pre>
+<p>just to be “efficient”.</p>
+<p>That hurts readability.</p>
+<hr>
+<h1 id="3-where-stringbuilder-really-matters"><a class="header" href="#3-where-stringbuilder-really-matters">3. Where StringBuilder REALLY Matters</a></h1>
+<h2 id="bad"><a class="header" href="#bad">Bad</a></h2>
+<pre><code class="language-java">String result = "";
+for (User user : users) {
+    result += user.getName();
+}
+</code></pre>
+<p><strong>Why?</strong></p>
+<p>Each iteration creates a new String.</p>
+<p>Complexity grows badly.</p>
+<hr>
+<h2 id="good-1"><a class="header" href="#good-1">Good</a></h2>
+<pre><code class="language-java">StringBuilder result = new StringBuilder();
+for (User user : users) {
+    result.append(user.getName());
+}
+return result.toString();
+</code></pre>
+<p>This is one of the most common Sonar recommendations. <a href="https://community.sonarsource.com/t/s1643-false-positive-use-a-stringbuilder-instead-when-using-api-that-consumes-string-in-a-loop/120840">[community….source.com]</a>, <a href="https://community.sonarsource.com/t/java-stringbuilder-suggestion-in-java-11-mostly-obsolete/143979">[community….source.com]</a></p>
+<hr>
+<h1 id="4-compare-strings-correctly"><a class="header" href="#4-compare-strings-correctly">4. Compare Strings Correctly</a></h1>
+<h2 id="wrong"><a class="header" href="#wrong">Wrong</a></h2>
+<pre><code class="language-java">if (str1 == str2)
+</code></pre>
+<p><code>==</code> compares references.</p>
+<hr>
+<h2 id="correct"><a class="header" href="#correct">Correct</a></h2>
+<pre><code class="language-java">if (str1.equals(str2))
+</code></pre>
+<hr>
+<h2 id="null-safe"><a class="header" href="#null-safe">Null-safe</a></h2>
+<pre><code class="language-java">if ("ACTIVE".equals(status))
+</code></pre>
+<p>instead of</p>
+<pre><code class="language-java">if (status.equals("ACTIVE"))
+</code></pre>
+<p>because:</p>
+<pre><code class="language-java">status = null;
+</code></pre>
+<p>would throw:</p>
+<pre><code class="language-java">NullPointerException
+</code></pre>
+<hr>
+<h1 id="5-use-isblank-instead-of-ugly-checks"><a class="header" href="#5-use-isblank-instead-of-ugly-checks">5. Use isBlank() Instead of Ugly Checks</a></h1>
+<h2 id="old"><a class="header" href="#old">Old</a></h2>
+<pre><code class="language-java">if (str == null || str.trim().isEmpty())
+</code></pre>
+<hr>
+<h2 id="modern"><a class="header" href="#modern">Modern</a></h2>
+<pre><code class="language-java">if (str == null || str.isBlank())
+</code></pre>
+<p>Java 11+</p>
+<p>Much cleaner.</p>
+<hr>
+<h1 id="6-use-stringjoin"><a class="header" href="#6-use-stringjoin">6. Use String.join()</a></h1>
+<h2 id="bad-1"><a class="header" href="#bad-1">Bad</a></h2>
+<pre><code class="language-java">String csv =
+    firstName + "," +
+    lastName + "," +
+    city;
+</code></pre>
+<hr>
+<h2 id="better"><a class="header" href="#better">Better</a></h2>
+<pre><code class="language-java">String csv = String.join(
+    ",",
+    firstName,
+    lastName,
+    city
+);
+</code></pre>
+<p>Cleaner and easier to maintain.</p>
+<hr>
+<h1 id="7-use-formatting-methods"><a class="header" href="#7-use-formatting-methods">7. Use Formatting Methods</a></h1>
+<h2 id="old-1"><a class="header" href="#old-1">Old</a></h2>
+<pre><code class="language-java">String message =
+    "User " + userId +
+    " has balance " + balance;
+</code></pre>
+<hr>
+<h2 id="better-1"><a class="header" href="#better-1">Better</a></h2>
+<pre><code class="language-java">String message =
+    "User %s has balance %.2f"
+        .formatted(userId, balance);
+</code></pre>
+<p>Java 15+</p>
+<h3 id="or"><a class="header" href="#or">Or</a></h3>
+<pre><code class="language-java">String.format(...)
+</code></pre>
+<hr>
+<h1 id="8-avoid-magic-case-conversion"><a class="header" href="#8-avoid-magic-case-conversion">8. Avoid Magic Case Conversion</a></h1>
+<h2 id="dangerous"><a class="header" href="#dangerous">Dangerous</a></h2>
+<pre><code class="language-java">if (str.toLowerCase().equals("admin"))
+</code></pre>
+<p>Locale issues can occur.</p>
+<hr>
+<h2 id="better-2"><a class="header" href="#better-2">Better</a></h2>
+<pre><code class="language-java">if ("admin".equalsIgnoreCase(str))
+</code></pre>
+<hr>
+<h1 id="9-avoid-repeated-regex-compilation"><a class="header" href="#9-avoid-repeated-regex-compilation">9. Avoid Repeated Regex Compilation</a></h1>
+<h2 id="bad-2"><a class="header" href="#bad-2">Bad</a></h2>
+<pre><code class="language-java">public boolean isValid(String s) {
+    return s.matches("[A-Z]{3}[0-9]{5}");
+}
+</code></pre>
+<p>Called thousands of times?</p>
+<p>Regex gets recompiled repeatedly.</p>
+<hr>
+<h2 id="better-3"><a class="header" href="#better-3">Better</a></h2>
+<pre><code class="language-java">private static final Pattern PATTERN =
+    Pattern.compile("[A-Z]{3}[0-9]{5}");
+
+public boolean isValid(String s) {
+    return PATTERN.matcher(s).matches();
+}
+</code></pre>
+<p>Real performance improvement.</p>
+<hr>
+<h1 id="10-stringbuilder-capacity"><a class="header" href="#10-stringbuilder-capacity">10. StringBuilder Capacity</a></h1>
+<p>Rarely discussed.</p>
+<p>If you know size beforehand:</p>
+<pre><code class="language-java">StringBuilder sb = new StringBuilder(5000);
+</code></pre>
+<p>instead of:</p>
+<pre><code class="language-java">StringBuilder sb = new StringBuilder();
+</code></pre>
+<p>Useful for:</p>
+<ul>
+<li>CSV exports</li>
+<li>Report generation</li>
+<li>Large JSON construction</li>
+</ul>
+<p>Reduces internal reallocations.</p>
+<hr>
+<h1 id="11-dont-compare-stringbuilder-objects"><a class="header" href="#11-dont-compare-stringbuilder-objects">11. Don’t Compare StringBuilder Objects</a></h1>
+<p>Many developers get caught here.</p>
+<pre><code class="language-java">StringBuilder sb1 = new StringBuilder("abc");
+StringBuilder sb2 = new StringBuilder("abc");
+sb1.equals(sb2);
+</code></pre>
+<p>Result:</p>
+<pre><code class="language-java">false
+</code></pre>
+<p><code>StringBuilder</code> doesn’t compare content through <code>equals()</code>. <a href="https://stackoverflow.com/questions/18565701/stringbuilder-equals-java">[stackoverflow.com]</a>, <a href="https://www.javathinking.com/blog/compare-stringbuilder-objects-in-java/">[javathinking.com]</a></p>
+<p>Use:</p>
+<pre><code class="language-java">sb1.toString().equals(sb2.toString())
+</code></pre>
+<hr>
+<h1 id="12-real-enterprise-patterns"><a class="header" href="#12-real-enterprise-patterns">12. Real Enterprise Patterns</a></h1>
+<h2 id="logging"><a class="header" href="#logging">Logging</a></h2>
+<h3 id="bad-3"><a class="header" href="#bad-3">Bad:</a></h3>
+<pre><code class="language-java">logger.info(
+    "User " + user.getId() +
+    " logged in"
+);
+</code></pre>
+<p>If log level is disabled:</p>
+<ul>
+<li>String still gets created.</li>
+</ul>
+<h3 id="better-4"><a class="header" href="#better-4">Better:</a></h3>
+<pre><code class="language-java">logger.info(
+    "User {} logged in",
+    user.getId()
+);
+</code></pre>
+<p>SLF4J evaluates lazily.</p>
+<p>Huge win in enterprise applications.</p>
+<hr>
+<h2 id="sql"><a class="header" href="#sql">SQL</a></h2>
+<h3 id="bad-4"><a class="header" href="#bad-4">Bad:</a></h3>
+<pre><code class="language-java">String sql =
+    "SELECT * FROM users WHERE id = " + id;
+</code></pre>
+<p>SQL Injection risk.</p>
+<h3 id="better-5"><a class="header" href="#better-5">Better:</a></h3>
+<pre><code class="language-java">PreparedStatement ps =
+    connection.prepareStatement(
+        "SELECT * FROM users WHERE id = ?"
+    );
+</code></pre>
+<hr>
+<h2 id="json"><a class="header" href="#json">JSON</a></h2>
+<h3 id="bad-5"><a class="header" href="#bad-5">Bad:</a></h3>
+<pre><code class="language-java">vString json =
+    "{"name":"" + name + ""}";
+</code></pre>
+<h3 id="use"><a class="header" href="#use">Use:</a></h3>
+<ul>
+<li>
+<p>Jackson</p>
+</li>
+<li>
+<p>Gson</p>
+</li>
+<li>
+<p>JSON-B</p>
+</li>
+</ul>
+<p>Never manually build production JSON.</p>
+<hr>
+<h1 id="13-sonarqube-friendly-checklist"><a class="header" href="#13-sonarqube-friendly-checklist">13. SonarQube-Friendly Checklist</a></h1>
+<p>✅ Use <code>String</code> by default</p>
+<p>✅ Use <code>StringBuilder</code> inside loops</p>
+<p>✅ Prefer <code>"constant".equals(variable)</code></p>
+<p>✅ Use <code>isBlank()</code> when applicable</p>
+<p>✅ Precompile regex patterns</p>
+<p>✅ Use logging placeholders (<code>{}</code>)</p>
+<p>✅ Use <code>String.join()</code></p>
+<p>✅ Use <code>formatted()</code> or <code>String.format()</code></p>
+<p>✅ Initialize <code>StringBuilder</code> capacity when size is known</p>
+<p>✅ Avoid unnecessary <code>toLowerCase()/toUpperCase()</code></p>
+<p>❌ Don’t use <code>==</code> for String comparison</p>
+<p>❌ Don’t concatenate Strings inside loops</p>
+<p>❌ Don’t build SQL with String concatenation</p>
+<p>❌ Don’t manually build JSON/XML when libraries exist</p>
+<hr>
+<h1 id="my-senior-java-developer-rule-of-thumb"><a class="header" href="#my-senior-java-developer-rule-of-thumb">My “Senior Java Developer” Rule of Thumb</a></h1>
+<p>I typically use this decision tree:</p>
+<pre><code>Need text value?
+
+    -&gt; String
+
+Need to build text in a loop?
+
+    -&gt; StringBuilder
+
+Multiple threads sharing the builder?
+
+    -&gt; StringBuffer
+
+Building SQL?
+
+    -&gt; PreparedStatement
+
+Building JSON?
+
+    -&gt; Jackson/Gson
+
+Logging?
+
+    -&gt; Parameterized logging
+</code></pre>
+<p>If you’re interested, I can also give you a**“Top 20 SonarQube String-related rules for Java”** with examples of violations, fixes, and the reasoning behind each rule.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<pre><code>OK, but let's go ones step back... I'm referring to how to declare them.
+I'm already aware about all those special considerations when there's a need to handle them programatically, 
+but in real-world scenarios, most of the times SonarQube MAKES you create them as constants and just shoving 
+them all in a static utility class may not be the best way to do it
+</code></pre>
+<hr>
+<p>Ahhh, that’s actually the more interesting problem 😄.</p>
+<p>Most “String best practices” discussions focus on manipulation. In large Java codebases, the real pain is often:</p>
+<blockquote>
+<p>How do we organize string literals without ending up with a 5,000-line Constants.java file that Sonar forced us into?</p>
+</blockquote>
+<p>And frankly, I think some teams misunderstand Sonar’s intent.</p>
+<h1 id="first-not-every-string-should-become-a-constant"><a class="header" href="#first-not-every-string-should-become-a-constant">First: Not Every String Should Become a Constant</a></h1>
+<p>A common anti-pattern:</p>
+<pre><code class="language-java">public static final String ERROR = "ERROR";
+public static final String ACTIVE = "ACTIVE";
+public static final String YES = "YES";
+public static final String NO = "NO";
+</code></pre>
+<p>just because Sonar detected duplication.</p>
+<ul>
+<li>Technically compliant.</li>
+<li>Practically terrible.</li>
+</ul>
+<p>When I read:</p>
+<pre><code class="language-Java">if (Constants.ACTIVE.equals(status))
+</code></pre>
+<p>I’ve learned nothing.</p>
+<p>When I read:</p>
+<pre><code class="language-Java">if ("ACTIVE".equals(status))
+</code></pre>
+<p>the meaning is immediately obvious.</p>
+<h2 id="my-rule"><a class="header" href="#my-rule">My Rule</a></h2>
+<p>If the literal itself is the business meaning:</p>
+<pre><code class="language-Java">"ACTIVE"
+"INACTIVE"
+"PENDING"
+</code></pre>
+<p>➡️ Consider an enum instead.</p>
+<pre><code class="language-Java">public enum Status {
+    ACTIVE,
+    INACTIVE,
+    PENDING
+}
+</code></pre>
+<p>Then:</p>
+<pre><code class="language-Java">if (status == Status.ACTIVE)
+</code></pre>
+<p>which is dramatically better.</p>
+<h1 id="where-constants-actually-make-sense"><a class="header" href="#where-constants-actually-make-sense">Where Constants Actually Make Sense</a></h1>
+<p>I usually ask:</p>
+<p><strong>“Would changing this value require changing multiple places?”</strong></p>
+<p>If yes → constant.</p>
+<h2 id="good-candidate-1-regex"><a class="header" href="#good-candidate-1-regex">Good Candidate #1: Regex</a></h2>
+<pre><code class="language-Java">private static final String EMAIL_REGEX = "...";
+</code></pre>
+<p>or</p>
+<pre><code class="language-Java">private static final Pattern EMAIL_PATTERN = Pattern.compile(...);
+</code></pre>
+<p>Makes sense.</p>
+<p>Regexes are difficult to understand and likely reused.</p>
+<h2 id="good-candidate-2-json-keys"><a class="header" href="#good-candidate-2-json-keys">Good Candidate #2: JSON Keys</a></h2>
+<pre><code class="language-Java">public static final String CUSTOMER_ID = "customerId";
+public static final String ORDER_ID = "orderId";
+</code></pre>
+<p>because:</p>
+<pre><code class="language-Java">jsonNode.get(CUSTOMER_ID);
+</code></pre>
+<p>prevents typo bugs.</p>
+<h2 id="good-candidate-3-database-columns"><a class="header" href="#good-candidate-3-database-columns">Good Candidate #3: Database Columns</a></h2>
+<pre><code class="language-Java">public static final String COL_ID = "id";
+public static final String COL_NAME = "name";
+</code></pre>
+<p>especially when using JDBC.</p>
+<h2 id="good-candidate-4-external-contract-values"><a class="header" href="#good-candidate-4-external-contract-values">Good Candidate #4: External Contract Values</a></h2>
+<pre><code class="language-Java">public static final String HEADER_CORRELATION_ID = "X-Correlation-Id";
+</code></pre>
+<p>These strings represent a contract.</p>
+<p>That’s important.</p>
+<h1 id="where-utility-classes-become-horrible"><a class="header" href="#where-utility-classes-become-horrible">Where Utility Classes Become Horrible</a></h1>
+<p>Many projects eventually get:</p>
+<pre><code class="language-Java">public final class Constants {
+ 
+public static final String YES = "YES";
+public static final String NO = "NO";
+ 
+public static final String ACTIVE = "ACTIVE";
+ 
+public static final String CUSTOMER_ID = "customerId";
+ 
+public static final String ERROR_MSG = "Error";
+ 
+...
+}
+</code></pre>
+<p>5000 lines later:</p>
+<pre><code class="language-Java">Constants.CUSTOMER_ID
+Constants.ERROR_17
+Constants.FILE_SEPARATOR
+Constants.SERVICE_URL
+</code></pre>
+<p>Nobody knows where anything belongs.</p>
+<h1 id="better-approach-context-based-constants"><a class="header" href="#better-approach-context-based-constants">Better Approach: Context-Based Constants</a></h1>
+<p>Instead of:</p>
+<pre><code class="language-Java">Constants
+</code></pre>
+<p>do:</p>
+<pre><code class="language-Java">CustomerConstants
+OrderConstants
+JsonFields
+ApiHeaders
+DatabaseColumns
+RegexPatterns
+</code></pre>
+<p>Example:</p>
+<pre><code class="language-Java">public final class ApiHeaders {
+     
+    private ApiHeaders() {}
+     
+    public static final String CORRELATION_ID = "X-Correlation-Id";
+     
+    public static final String REQUEST_ID = "X-Request-Id";
+
+}
+</code></pre>
+<p>Now usage is self-documenting:</p>
+<pre><code class="language-Java">ApiHeaders.CORRELATION_ID
+</code></pre>
+<h1 id="even-better-put-constants-near-their-usage"><a class="header" href="#even-better-put-constants-near-their-usage">Even Better: Put Constants Near Their Usage</a></h1>
+<p>This is the approach many senior teams use.</p>
+<p>Instead of:</p>
+<pre><code class="language-Java">shared/constants/Constants.java
+</code></pre>
+<p>put:</p>
+<pre><code class="language-Java">customer/
+├─ CustomerService
+├─ CustomerRepository
+└─ CustomerConstants
+</code></pre>
+<p>Only customer code sees customer constants.</p>
+<p>This reduces coupling tremendously.</p>
+<h1 id="my-favorite-pattern-nested-constant-groups"><a class="header" href="#my-favorite-pattern-nested-constant-groups">My Favorite Pattern: Nested Constant Groups</a></h1>
+<p>For larger domains:</p>
+<pre><code class="language-Java">public final class CustomerContract {
+ 
+    private CustomerContract() {}
+     
+    public static final class Json {
+        public static final String ID = "id";
+        public static final String NAME = "name";
+    }
+     
+    public static final class Headers {
+        public static final String TRACE_ID = "X-Trace-Id";
+    }
+}
+</code></pre>
+<p>Usage:</p>
+<pre><code class="language-Java">CustomerContract.Json.ID
+CustomerContract.Headers.TRACE_ID
+</code></pre>
+<p>Extremely readable.</p>
+<h1 id="what-about-sonars-string-literal-repeated-x-times"><a class="header" href="#what-about-sonars-string-literal-repeated-x-times">What About Sonar’s “String Literal Repeated X Times”?</a></h1>
+<p>This rule is one of my least favorite when applied blindly.</p>
+<p>Example:</p>
+<pre><code class="language-Java">logger.info("Customer not found");
+</code></pre>
+<p>appearing 4 times.</p>
+<p>Sonar:</p>
+<blockquote>
+<p>Extract string literal.</p>
+</blockquote>
+<p>Then you get:</p>
+<pre><code class="language-Java">public static final String CUSTOMER_NOT_FOUND = "Customer not found";
+</code></pre>
+<p>Used only for logging.</p>
+<p>Now you’ve created an indirection with zero business value.</p>
+<p>I’d honestly suppress that finding.</p>
+<h1 id="enterprise-rule-of-thumb"><a class="header" href="#enterprise-rule-of-thumb">Enterprise Rule of Thumb</a></h1>
+<p>I generally classify strings into 5 buckets:</p>
+<h2 id="1-domain-values"><a class="header" href="#1-domain-values">1. Domain Values</a></h2>
+<pre><code class="language-Java">ACTIVE
+PENDING
+APPROVED
+</code></pre>
+<p>✅ Enum</p>
+<p>Not constants.</p>
+<h2 id="2-configuration-values"><a class="header" href="#2-configuration-values">2. Configuration Values</a></h2>
+<pre><code class="language-Java">api.url
+database.schema
+</code></pre>
+<p>✅ Externalized into properties</p>
+<p>Not constants.</p>
+<h2 id="3-technical-contracts"><a class="header" href="#3-technical-contracts">3. Technical Contracts</a></h2>
+<pre><code class="language-Java">customerId
+X-Correlation-Id
+Authorization
+</code></pre>
+<p>✅ Constants</p>
+<h3 id="4-repeated-messages"><a class="header" href="#4-repeated-messages">4. Repeated Messages</a></h3>
+<pre><code class="language-Java">"Customer not found"
+</code></pre>
+<p>⚠️ Usually leave as-is.</p>
+<p>Only extract if:</p>
+<ul>
+<li>localization required</li>
+<li>true reuse</li>
+<li>business significance</li>
+</ul>
+<h2 id="5-magic-strings-driving-logic"><a class="header" href="#5-magic-strings-driving-logic">5. Magic Strings Driving Logic</a></h2>
+<pre><code class="language-Java">if ("PREMIUM".equals(type))
+</code></pre>
+<p>✅ Usually enum.</p>
+<p>Not constant.</p>
+<h1 id="the-litmus-test-i-use"><a class="header" href="#the-litmus-test-i-use">The Litmus Test I Use</a></h1>
+<p>Whenever Sonar says:</p>
+<blockquote>
+<p>Extract this repeated string as a constant.</p>
+</blockquote>
+<p>I ask:</p>
+<blockquote>
+<p>Does the constant name convey more meaning than the literal?</p>
+</blockquote>
+<p>If not:</p>
+<pre><code class="language-Java">public static final String ACTIVE = "ACTIVE";
+</code></pre>
+<p>adds no value.</p>
+<p>If yes:</p>
+<pre><code class="language-Java">public static final String HEADER_CORRELATION_ID = "X-Correlation-Id";
+</code></pre>
+<p>adds context and prevents mistakes.</p>
+<p>That’s usually the difference between “Sonar-compliant code” and “maintainable enterprise code”. A lot of teams satisfy Sonar by centralizing literals; mature teams focus on ownership, scope, and domain meaning instead of merely reducing duplication. 🤓</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-3"><a href="#question-3" class="header">Question 3</a></h1>
+<pre><code>Yes, using enumerations is one painful way to deal with them...
+But there must be better ways to put them all those string constants together ina structured way.
+Let me just give you one example where constants or enums are NOT a fit-for-all solution:
+    Imagine I need a string constant "active" and ALSO "ACTIVE"; I know you'll say "you can just name 
+    one ACTIVE and the other one ACTIVE_1 or ACTIVE_ALLCAPS...
+    But then, imagine we ALSO need to use "Active".
+    And then, it gets worse... Imagine we need longer strings, delimiter (space) separated!
+    For example:
+        IS_ACTIVE = "is active", and then ISACTIVE = "IsActive",
+        and then IS_ACTIVE = "is active",
+        and then any sort of combinations (like: IS_ACTIVE1 = "is active" and IS_ACTIVE2 = "is_active")
+        that just go down the rabbit hole...
+</code></pre>
+<hr>
+<p>Now we’re getting into what I consider one of the biggest flaws of many Java coding standards.</p>
+<p>You’re describing a situation where <strong>the problem isn’t duplicate strings</strong>, it’s that <strong>the string itself is the data</strong>.</p>
+<p>For example:</p>
+<pre><code class="language-Java">"active"
+"ACTIVE"
+"Active"
+"is active"
+"is_active"
+"IsActive"
+"IS_ACTIVE"
+</code></pre>
+<p>Trying to force these into constants leads to nonsense:</p>
+<pre><code class="language-Java">ACTIVE_LOWER
+ACTIVE_UPPER
+ACTIVE_PASCAL
+ACTIVE_TITLE
+ACTIVE_SNAKE
+ACTIVE_SNAKE_UPPER
+</code></pre>
+<p>At that point you’ve lost all readability.</p>
+<hr>
+<h2 id="the-underlying-question-is"><a class="header" href="#the-underlying-question-is">The underlying question is:</a></h2>
+<p><strong>Why do these strings exist?</strong></p>
+<p>There are usually 4 distinct cases.</p>
+<h3 id="case-1-representation-variants"><a class="header" href="#case-1-representation-variants">Case 1: Representation Variants</a></h3>
+<p>Suppose all of these mean the same thing:</p>
+<pre><code class="language-Java">"active"
+"ACTIVE"
+"Active"
+</code></pre>
+<p>Then these should not be independent constants.</p>
+<p>Instead:</p>
+<pre><code class="language-Java">enum Status {
+    ACTIVE
+}
+</code></pre>
+<p>And provide formatting methods:</p>
+<pre><code class="language-Java">public enum Status {
+
+    ACTIVE;
+
+    public String lowerCase() {
+        return name().toLowerCase();
+    }
+
+    public String titleCase() {
+        return "Active";
+    }
+
+    public String upperCase() {
+        return name();
+    }
+
+}
+</code></pre>
+<p>Usage:</p>
+<pre><code class="language-Java">Status.ACTIVE.lowerCase();
+Status.ACTIVE.upperCase();
+Status.ACTIVE.titleCase();
+</code></pre>
+<p>Now the <em>concept</em> is centralized, not every possible representation.</p>
+<hr>
+<h3 id="case-2-contract-strings"><a class="header" href="#case-2-contract-strings">Case 2: Contract Strings</a></h3>
+<p>These are things like:</p>
+<pre><code class="language-Java">"isActive"      // JSON
+"is_active"     // DB
+"IS_ACTIVE"     // CSV
+"Is Active"     // UI
+</code></pre>
+<p>These are actually different contracts.</p>
+<p>I would model them as:</p>
+<pre><code class="language-Java">public final class CustomerFields {
+
+    public static final String JSON_IS_ACTIVE = "isActive";
+    public static final String DB_IS_ACTIVE = "is_active";
+    public static final String CSV_IS_ACTIVE = "IS_ACTIVE";
+    public static final String LABEL_IS_ACTIVE = "Is Active";
+
+}
+</code></pre>
+<p>Notice the naming.</p>
+<p>The meaning is:</p>
+<pre><code class="language-Java">IS_ACTIVE
+</code></pre>
+<p>The representation changes by context.</p>
+<hr>
+<h3 id="case-3-ui-text"><a class="header" href="#case-3-ui-text">Case 3: UI Text</a></h3>
+<p>The worst thing I see in enterprise apps:</p>
+<pre><code class="language-Java">public static final String SAVE = "Save";
+public static final String CANCEL = "Cancel";
+public static final String YES = "Yes";
+</code></pre>
+<p>These should not be constants.</p>
+<p>These should be messages.</p>
+<pre><code class="language-properties">button.save=Save
+button.cancel=Cancel
+</code></pre>
+<p>or</p>
+<pre><code class="language-YAML">button:
+  save: Save
+  cancel: Cancel
+</code></pre>
+<p>Because eventually:</p>
+<pre><code class="language-properties">button.save=Guardar
+</code></pre>
+<p>becomes necessary.</p>
+<hr>
+<h3 id="case-4-parser--mapper-domains"><a class="header" href="#case-4-parser--mapper-domains">Case 4: Parser / Mapper Domains</a></h3>
+<p>This is probably closest to your example.</p>
+<p>Imagine incoming data:</p>
+<pre><code class="language-Java">ACTIVE
+active
+Active
+A
+1
+</code></pre>
+<p>all mean the same thing.</p>
+<p>The solution isn’t constants.</p>
+<p>The solution is normalization.</p>
+<pre><code class="language-Java">private static final Map&lt;String, Status&gt; STATUS_MAPPING =
+        Map.of(
+            "ACTIVE", Status.ACTIVE,
+            "active", Status.ACTIVE,
+            "Active", Status.ACTIVE,
+            "A", Status.ACTIVE,
+            "1", Status.ACTIVE
+        );
+</code></pre>
+<p>Now business code never sees string literals.</p>
+<hr>
+<h1 id="what-i-see-good-teams-doing"><a class="header" href="#what-i-see-good-teams-doing">What I See Good Teams Doing</a></h1>
+<p>Instead of:</p>
+<pre><code class="language-Java">GlobalConstants.java
+</code></pre>
+<p>they create <strong>vocabularies</strong>.</p>
+<p>Example:</p>
+<pre><code class="language-Java">CustomerVocabulary
+OrderVocabulary
+JsonFields
+ApiContract
+DatabaseFields
+</code></pre>
+<p>Because the problem isn’t duplication.</p>
+<p>The problem is that every string belongs to a language.</p>
+<p>Example:</p>
+<pre><code class="language-Java">public final class CustomerJson {
+    public static final String IS_ACTIVE = "isActive";
+    public static final String FIRST_NAME = "firstName";
+    public static final String LAST_NAME = "lastName";
+}
+</code></pre>
+<p>Usage:</p>
+<pre><code class="language-Java">CustomerJson.IS_ACTIVE
+</code></pre>
+<p>Immediately tells me:</p>
+<ul>
+<li>meaning → IS_ACTIVE</li>
+<li>representation → JSON</li>
+</ul>
+<hr>
+<h1 id="my-personal-hot-take-"><a class="header" href="#my-personal-hot-take-">My Personal Hot Take 🔥</a></h1>
+<p>Sonar’s duplicate-string rule is often correct for:</p>
+<pre><code class="language-Java">"userId"
+"customerId"
+"x-request-id"
+</code></pre>
+<p>but often harmful for:</p>
+<pre><code class="language-Java">"ACTIVE"
+"PENDING"
+"Save"
+"Cancel"
+"Error"
+</code></pre>
+<p>because developers start fighting the tool instead of modeling the domain.</p>
+<p>When you reach:</p>
+<pre><code class="language-Java">ACTIVE_UPPERCASE
+ACTIVE_CAPITALIZED
+ACTIVE_LOWERCASE
+ACTIVE_UNDERSCORE
+ACTIVE_SPACE_SEPARATED
+</code></pre>
+<p>that’s usually a sign that <strong>constants are the wrong abstraction</strong>.</p>
+<p>The real abstraction is one of:</p>
+<ul>
+<li>an enum</li>
+<li>a message bundle</li>
+<li>a vocabulary/contract class</li>
+<li>a formatter</li>
+<li>a mapper/normalizer</li>
+</ul>
+<p>depending on why those strings differ.</p>
+<p>The most maintainable systems I’ve seen don’t organize strings by <strong>syntax</strong> (“all constants here”), they organize strings by <strong>ownership and context</strong> (“these are JSON field names”, “these are DB columns”, “these are UI labels”, “these are legal status values”). That’s the point where the rabbit hole usually disappears. 🧠</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-4"><a href="#question-4" class="header">Question 4</a></h1>
+<pre><code>Look, I know the enum with utility methods may be the most accptable solution for this.
+But it doesn't feel natural, you know?
+Why not have plain old simple strings like this?
+</code></pre>
+<pre><code class="language-java">public class Strings {
+    public final String active = "active";
+    public final String ACTIVE = "ACTIVE";
+    public final String Active = "Active";
+    public final String is_active = "is active"; // I know, can collide with "is_active"
+    public final String IS_ACTIVE = "IS ACTIVE";
+    // and so on
+}
+</code></pre>
+<hr>
+<p>Honestly? From a <strong>language design perspective</strong>, what you’re proposing is actually quite reasonable.</p>
+<p>The problem is that Java’s identifier rules weren’t designed for this use case.</p>
+<p>When you write:</p>
+<pre><code class="language-Java">public class Strings {
+    public final String active = "active";
+    public final String ACTIVE = "ACTIVE";
+    public final String Active = "Active";
+}
+</code></pre>
+<p>you’re essentially trying to create a <strong>string dictionary</strong> where:</p>
+<ul>
+<li>the field name mirrors the value</li>
+<li>auto-completion becomes the lookup mechanism</li>
+<li>the compiler provides type safety</li>
+</ul>
+<p>That’s not crazy at all.</p>
+<p>The issue is that Java identifiers are <strong>case-sensitive but otherwise limited</strong>, so eventually you hit collisions:</p>
+<pre><code class="language-Java">is_active = "is active";
+is_active = "is_active"; // impossible
+</code></pre>
+<p>and then the naming scheme falls apart.</p>
+<hr>
+<h2 id="whats-interesting-is-that-many-languages-moved-away-from-this-pattern"><a class="header" href="#whats-interesting-is-that-many-languages-moved-away-from-this-pattern">What’s interesting is that many languages moved away from this pattern</a></h2>
+<p>For example, your <code>Strings</code> class is trying to act like:</p>
+<pre><code class="language-JSON">{
+  "active": "active",
+  "ACTIVE": "ACTIVE",
+  "Active": "Active",
+  "is active": "is active",
+  "is_active": "is_active"
+}
+</code></pre>
+<p>which is really a <strong>dictionary/map</strong>, not a class.</p>
+<p>In a language with first-class module constants this feels natural.</p>
+<p>In Java, not so much.</p>
+<hr>
+<h2 id="the-real-objection-id-have-is-not-the-naming"><a class="header" href="#the-real-objection-id-have-is-not-the-naming">The real objection I’d have is not the naming</a></h2>
+<p>It’s the instantiation.</p>
+<p>I’d never write:</p>
+<pre><code class="language-Java">public class Strings {
+    public final String active = "active";
+}
+</code></pre>
+<p>because every instance creates fields that are identical.</p>
+<p>I’d at least make them static:</p>
+<pre><code class="language-Java">public final class Strings {
+    private Strings() {}
+    public static final String active = "active";
+    public static final String ACTIVE = "ACTIVE";
+    public static final String Active = "Active";
+}
+</code></pre>
+<p>Even though the names break Java conventions.</p>
+<hr>
+<h2 id="but-heres-where-things-get-philosophical"><a class="header" href="#but-heres-where-things-get-philosophical">But here’s where things get philosophical</a></h2>
+<p>Suppose I read:</p>
+<pre><code class="language-Java">if (status.equals(Strings.active))
+</code></pre>
+<p>What did I gain?</p>
+<p>Compared to:</p>
+<pre><code class="language-Java">if (status.equals("active"))
+</code></pre>
+<p>Almost nothing.</p>
+<p>In fact, I arguably lost readability because:</p>
+<ul>
+<li><code>"active"</code> is immediately understandable</li>
+<li><code>Strings.active</code> requires navigation</li>
+</ul>
+<p>That’s why many senior developers resist extracting simple literals.</p>
+<hr>
+<h2 id="where-your-idea-becomes-more-compelling"><a class="header" href="#where-your-idea-becomes-more-compelling">Where your idea becomes more compelling</a></h2>
+<p>When the strings stop being obvious.</p>
+<p>Imagine:</p>
+<pre><code class="language-Java">public final class JsonFields {
+    public static final String isActive = "is_active";
+    public static final String accountReference = "account_reference_id";
+    public static final String externalCorrelation = "external_correlation_identifier";
+}
+</code></pre>
+<p>Now:</p>
+<pre><code class="language-Java">json.get(JsonFields.accountReference);
+</code></pre>
+<p>is better than:</p>
+<pre><code class="language-Java">json.get("account_reference_id");
+</code></pre>
+<p>because the Java identifier becomes documentation.</p>
+<hr>
+<h2 id="the-hidden-problem-youre-discovering"><a class="header" href="#the-hidden-problem-youre-discovering">The hidden problem you’re discovering</a></h2>
+<p>You want:</p>
+<pre><code class="language-Java">Strings.active
+Strings.ACTIVE
+Strings.Active
+Strings.is_active
+Strings.isActive
+Strings.IS_ACTIVE
+</code></pre>
+<p>because the <strong>representation itself matters</strong>.</p>
+<p>That’s usually a sign that the string isn’t a business concept.</p>
+<p>It’s raw text.</p>
+<p>And raw text tends to be best stored as data, not code.</p>
+<p>Sometimes I see teams do this:</p>
+<pre><code class="language-java">
+public final class Vocabulary {
+
+    public static final Map&lt;String, String&gt; WORDS =
+        Map.ofEntries(
+            entry("active", "active"),
+            entry("ACTIVE", "ACTIVE"),
+            entry("Active", "Active"),
+            entry("is active", "is active"),
+            entry("is_active", "is_active")
+        );
+
+}
+</code></pre>
+<p>or even:</p>
+<pre><code class="language-Java">public final class Vocabulary {
+    public static final String ACTIVE_LOWER = "active";
+    public static final String ACTIVE_UPPER = "ACTIVE";
+    public static final String ACTIVE_TITLE = "Active";
+}
+</code></pre>
+<p>which looks uglier, but avoids collisions.</p>
+<hr>
+<h2 id="my-take"><a class="header" href="#my-take">My take</a></h2>
+<p>I think Java is actually missing a construct here.</p>
+<p>If I could invent one, I’d want something like:</p>
+<pre><code class="language-Java">strings {
+    "active";
+    "ACTIVE";
+    "Active";
+    "is active";
+    "is_active";
+}
+</code></pre>
+<p>with compile-time deduplication and IDE lookup.</p>
+<p>That’s closer to what you’re trying to model.</p>
+<p>Unfortunately Java only gives us:</p>
+<ul>
+<li>literals</li>
+<li>constants</li>
+<li>enums</li>
+<li>resource bundles</li>
+<li>maps</li>
+</ul>
+<p>and none of them fit perfectly.</p>
+<p>So if you’re asking me as an architect rather than as a SonarQube follower:</p>
+<blockquote>
+<p>Is a dedicated class whose purpose is to centralize vocabulary strings inherently bad?</p>
+</blockquote>
+<p>No.</p>
+<p>Not at all.</p>
+<p>I would actually prefer:</p>
+<pre><code class="language-Java">CustomerVocabulary.ACTIVE
+CustomerVocabulary.IS_ACTIVE_COLUMN
+CustomerVocabulary.IS_ACTIVE_LABEL
+</code></pre>
+<p>over a giant global <code>Constants</code> class.</p>
+<p>What I would <em>not</em> do is try to make the Java identifier mirror every possible text representation, because eventually the naming collisions become worse than the original duplication problem.</p>
+<p>The moment you need:</p>
+<pre><code class="language-Java">"active"
+"ACTIVE"
+"Active"
+"active "
+" active"
+"is active"
+"is_active"
+"is-active"
+</code></pre>
+<p>you’re no longer modeling constants. You’re modeling <strong>text variants</strong>, and Java field names are simply the wrong data structure for that job. That’s where a vocabulary object, lookup table, or normalization layer starts to feel more natural than either constants or enums. 🤓</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<pre><code>I know! That's why let's go back to square one: How can we handle these string constants is a more natural way?
+Consider best practices, use of strings externalization (I18n), libraries, etc. anything that can help. 
+Feel free to compare with other programming languages apart from Java if you consider necessary
+</code></pre>
+<hr>
+<p>This is actually a surprisingly deep software architecture topic.</p>
+<p>I think you’ve already stumbled upon the core insight:</p>
+<blockquote>
+<p>The problem is not “how do I declare strings?”</p>
+<p>The problem is “what kind of information does a string represent?”</p>
+</blockquote>
+<p>Many teams end up with a giant constants jungle because Java historically treated all string literals the same, while in reality they belong to very different categories.</p>
+<hr>
+<h1 id="lets-start-from-the-ideal-world"><a class="header" href="#lets-start-from-the-ideal-world">Let’s start from the ideal world</a></h1>
+<p>Imagine a language designed today.</p>
+<p>You might want something like:</p>
+<pre><code class="language-Java">vocabulary Customer {
+    active
+    ACTIVE
+    Active
+    "is active"
+    "is_active"
+    "IsActive"
+}
+</code></pre>
+<p>Then IDE autocompletion would give:</p>
+<pre><code class="language-Java">Customer.active
+Customer.ACTIVE
+Customer.IsActive
+</code></pre>
+<p>without forcing you to invent:</p>
+<pre><code class="language-Java">ACTIVE_LOWERCASE
+ACTIVE_UPPERCASE
+ACTIVE_PASCALCASE
+ACTIVE_SNAKECASE
+</code></pre>
+<p>Unfortunately Java doesn’t have such a construct.</p>
+<hr>
+<h1 id="what-do-other-languages-do"><a class="header" href="#what-do-other-languages-do">What do other languages do?</a></h1>
+<h2 id="typescript"><a class="header" href="#typescript">TypeScript</a></h2>
+<p>Very commonly:</p>
+<pre><code class="language-TypeScript">export const CustomerFields = {
+    active: "active",
+    Active: "Active",
+    ACTIVE: "ACTIVE",
+    isActive: "isActive",
+    is_active: "is_active"
+};
+</code></pre>
+<p>Usage:</p>
+<pre><code class="language-TypeScript">CustomerFields.isActive
+</code></pre>
+<p>This feels extremely natural.</p>
+<p>Why?</p>
+<p>Because objects are cheap and first-class.</p>
+<hr>
+<h2 id="python"><a class="header" href="#python">Python</a></h2>
+<p>Often:</p>
+<pre><code class="language-Python">class CustomerFields:
+    ACTIVE = "ACTIVE"
+    ACTIVE_LOWER = "active"
+</code></pre>
+<p>or simply:</p>
+<pre><code class="language-Python">FIELDS = {
+    "active": "active",
+    "ACTIVE": "ACTIVE"
+}
+</code></pre>
+<p>Python developers are generally much less religious about constants.</p>
+<hr>
+<h2 id="c"><a class="header" href="#c">C#</a></h2>
+<p>A particularly interesting example.</p>
+<p>Many teams use:</p>
+<pre><code class="language-C#">public static class CustomerFields
+{
+    public const string Active = "Active";
+    public const string IsActive = "IsActive";
+}
+</code></pre>
+<p>because naming conventions are less dogmatic than in Java.</p>
+<hr>
+<h1 id="why-java-feels-awkward"><a class="header" href="#why-java-feels-awkward">Why Java feels awkward</a></h1>
+<p>Java constants have always relied on:</p>
+<pre><code class="language-Java">public static final String SOMETHING
+</code></pre>
+<p>which means:</p>
+<ul>
+<li>identifier must be unique</li>
+<li>identifier must be legal Java</li>
+<li>identifier can’t contain spaces</li>
+<li>naming convention expects screaming snake case</li>
+</ul>
+<p>but string values often need:</p>
+<pre><code class="language-Java">"active"
+"ACTIVE"
+"Active"
+"is active"
+"is_active"
+"IsActive"
+</code></pre>
+<p>Those worlds don’t align.</p>
+<hr>
+<h1 id="my-current-favorite-approach"><a class="header" href="#my-current-favorite-approach">My Current Favorite Approach</a></h1>
+<p>Not enums.</p>
+<p>Not a giant constants class.</p>
+<p>Use <strong>typed vocabularies</strong>.</p>
+<p>Example:</p>
+<pre><code class="language-Java">public final class CustomerFields {
+
+    private CustomerFields() {}
+
+    public static final String JSON_IS_ACTIVE = "isActive";
+    public static final String DB_IS_ACTIVE = "is_active";
+    public static final String UI_IS_ACTIVE = "Is Active";
+
+}
+</code></pre>
+<p>Notice what changed.</p>
+<p>The identifier describes the <strong>purpose</strong>, not the text.</p>
+<hr>
+<h1 id="even-better-externalize-when-the-text-is-content"><a class="header" href="#even-better-externalize-when-the-text-is-content">Even Better: Externalize When the Text Is Content</a></h1>
+<p>This is where I think many Java applications go wrong.</p>
+<p>Suppose:</p>
+<pre><code class="language-Java">"Save"
+"Cancel"
+"Customer not found"
+</code></pre>
+<p>These are not constants.</p>
+<p>These are messages.</p>
+<hr>
+<p>Instead of:</p>
+<pre><code class="language-Java">public static final String SAVE = "Save";
+</code></pre>
+<p>use:</p>
+<pre><code class="language-properties">button.save=Save
+button.cancel=Cancel
+</code></pre>
+<p>Java:</p>
+<pre><code class="language-Java">ResourceBundle bundle = ResourceBundle.getBundle("messages");
+bundle.getString("button.save");
+</code></pre>
+<p>Now you automatically get:</p>
+<pre><code class="language-properties">button.save=Guardar
+</code></pre>
+<p>for Spanish.</p>
+<hr>
+<h1 id="think-in-terms-of-ownership"><a class="header" href="#think-in-terms-of-ownership">Think in Terms of Ownership</a></h1>
+<p>This is probably the biggest best practice I’ve adopted over the years.</p>
+<p>Don’t ask:</p>
+<blockquote>
+<p>Where should this string live?</p>
+</blockquote>
+<p>Ask:</p>
+<blockquote>
+<p>Who owns this string?</p>
+</blockquote>
+<hr>
+<h2 id="json-contract"><a class="header" href="#json-contract">JSON contract</a></h2>
+<pre><code class="language-Java">CustomerJsonFields
+</code></pre>
+<hr>
+<h2 id="database"><a class="header" href="#database">Database</a></h2>
+<pre><code class="language-Java">CustomerColumns
+</code></pre>
+<hr>
+<h2 id="rest-endpoints"><a class="header" href="#rest-endpoints">REST endpoints</a></h2>
+<pre><code class="language-Java">ApiPaths
+</code></pre>
+<hr>
+<h2 id="ui-labels"><a class="header" href="#ui-labels">UI labels</a></h2>
+<pre><code class="language-properties">messages.properties
+</code></pre>
+<hr>
+<h2 id="domain-values"><a class="header" href="#domain-values">Domain values</a></h2>
+<pre><code class="language-Java">enum CustomerStatus
+</code></pre>
+<hr>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<pre><code class="language-YAML">application.yml
+</code></pre>
+<hr>
+<h1 id="if-youre-fighting-sonar"><a class="header" href="#if-youre-fighting-sonar">If You’re Fighting Sonar…</a></h1>
+<p>This might be controversial.</p>
+<p>Many teams should simply reconfigure the rule.</p>
+<p>For example:</p>
+<pre><code class="language-Java">if ("ACTIVE".equals(status))
+</code></pre>
+<p>appearing three times.</p>
+<p>Sonar:</p>
+<blockquote>
+<p>Extract duplicated string literal.</p>
+</blockquote>
+<p>Developer:</p>
+<pre><code class="language-Java">public static final String ACTIVE = "ACTIVE";
+</code></pre>
+<p>Everybody loses.</p>
+<p>The generated constant adds no semantic value.</p>
+<hr>
+<p>A principle I use:</p>
+<h3 id="extract-only-if-the-constant-name-teaches-me-something"><a class="header" href="#extract-only-if-the-constant-name-teaches-me-something">Extract only if the constant name teaches me something.</a></h3>
+<p>Bad:</p>
+<pre><code class="language-Java">public static final String ACTIVE = "ACTIVE";
+</code></pre>
+<p>Good:</p>
+<pre><code class="language-Java">public static final String CUSTOMER_STATUS_ACTIVE = "ACTIVE";
+</code></pre>
+<p>because now the constant expresses domain meaning.</p>
+<hr>
+<h1 id="the-future-direction"><a class="header" href="#the-future-direction">The Future Direction</a></h1>
+<p>If I were starting a greenfield Java project today, I would classify strings into exactly these groups:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Storage</th></tr>
+</thead>
+<tbody>
+<tr><td>UI text</td><td>Resource bundle / I18n</td></tr>
+<tr><td>Configuration</td><td>YAML / properties</td></tr>
+<tr><td>API contracts</td><td>Vocabulary classes</td></tr>
+<tr><td>DB columns</td><td>Column classes</td></tr>
+<tr><td>JSON fields</td><td>Field classes</td></tr>
+<tr><td>Domain states</td><td>Enums</td></tr>
+<tr><td>Temporary literals</td><td>Inline strings</td></tr>
+<tr><td>Repeated business constants</td><td>Scoped constant classes</td></tr>
+</tbody>
+</table>
+</div>
+<p>Notice what’s missing:</p>
+<pre><code class="language-Java">Constants.java
+</code></pre>
+<p>I would actively ban it.</p>
+<hr>
+<h1 id="my-honest-conclusion"><a class="header" href="#my-honest-conclusion">My Honest Conclusion</a></h1>
+<p>After working through your examples, I don’t actually think the best solution is “better constants.”</p>
+<p>I think the best solution is realizing that <strong>“string” is not a single category of thing</strong>.</p>
+<p>The industry historically tried:</p>
+<pre><code class="language-Java">public final class Constants
+</code></pre>
+<p>Then moved to:</p>
+<pre><code class="language-Java">Enums everywhere
+</code></pre>
+<p>And neither is fully satisfactory.</p>
+<p>The most maintainable systems I’ve seen treat strings according to their role:</p>
+<ul>
+<li>text → I18n resources</li>
+<li>configuration → config files</li>
+<li>contracts → vocabulary classes</li>
+<li>states → enums</li>
+<li>identifiers → records/value objects</li>
+<li>one-off values → inline literals</li>
+</ul>
+<p>Once you do that, the number of actual string constants in Java code drops dramatically, and the remaining ones become much easier to organize naturally. The paradox is that the best way to manage string constants is often to stop treating everything as a string constant in the first place. 🤓</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-6"><a href="#question-6" class="header">Question 6</a></h1>
+<pre><code>Let's break it down a little (divide and conquer!)
+Let's say we care only for declaring single words, so we can deal with multiple ones using concatenation strategies.
+Example:
+    For "is active" we can declare `String is = "is";` and `String active = "active";`
+    and then use `String.join(SPACE, is, active);`
+    with a previously defined delimiter `String $space = " "` or some equivalent...
+What do you think about this?
+</code></pre>
+<hr>
+<p>This is exactly the kind of idea that sounds elegant at first, but I’d be very careful with it.</p>
+<p>Let’s analyze it from a software engineering perspective rather than a Java perspective.</p>
+<hr>
+<h2 id="what-youre-proposing"><a class="header" href="#what-youre-proposing">What you’re proposing</a></h2>
+<p>Instead of:</p>
+<pre><code class="language-Java">String status = "is active";
+</code></pre>
+<p>or</p>
+<pre><code class="language-Java">public static final String IS_ACTIVE = "is active";
+</code></pre>
+<p>you’d write:</p>
+<pre><code class="language-Java">String is = "is";
+String active = "active";
+String status = String.join(SPACE, is, active);
+</code></pre>
+<p>Conceptually you’re building a vocabulary of atomic words.</p>
+<hr>
+<h1 id="the-good-part-"><a class="header" href="#the-good-part-">The Good Part 👍</a></h1>
+<p>The biggest benefit is consistency.</p>
+<p>Suppose your system contains:</p>
+<pre><code class="language-Java">"active"
+"Active"
+"ACTIVE"
+</code></pre>
+<p>You could centralize:</p>
+<pre><code class="language-Java">Words.active
+Words.Active
+Words.ACTIVE
+</code></pre>
+<p>Then:</p>
+<pre><code class="language-Java">String status =
+    String.join(Words.SPACE,
+                Words.is,
+                Words.active);
+</code></pre>
+<p>You eliminate:</p>
+<ul>
+<li>typos</li>
+<li>duplicated literals</li>
+<li>inconsistent capitalization</li>
+</ul>
+<p>This resembles how DSLs and template engines are often built.</p>
+<hr>
+<h1 id="the-bad-part-"><a class="header" href="#the-bad-part-">The Bad Part 👎</a></h1>
+<p>You start optimizing the wrong thing.</p>
+<p>Suppose six months later I read:</p>
+<pre><code class="language-Java">String condition = join(SPACE, is, active);
+</code></pre>
+<p>I now have to mentally resolve:</p>
+<pre><code class="language-Java">is
++
+active
+</code></pre>
+<p>to understand:</p>
+<pre><code>"is active"
+</code></pre>
+<p>Whereas:</p>
+<pre><code class="language-Java">"is active"
+</code></pre>
+<p>has zero cognitive cost.</p>
+<p>The generated string is actually less readable than the literal.</p>
+<hr>
+<h1 id="the-database-normalization-trap"><a class="header" href="#the-database-normalization-trap">The Database Normalization Trap</a></h1>
+<p>What you’re proposing reminds me of database normalization.</p>
+<p>Normalization is great until:</p>
+<pre><code class="language-SQL">CUSTOMER
+
+    -&gt; ADDRESS
+
+        -&gt; CITY
+
+            -&gt; COUNTRY
+</code></pre>
+<p>requires 8 joins to display a page.</p>
+<p>Similarly:</p>
+<pre><code class="language-Java">join(SPACE,
+     is,
+     active)
+</code></pre>
+<p>is technically DRY.</p>
+<p>But it may make the code harder to read.</p>
+<hr>
+<h1 id="a-rule-i-use"><a class="header" href="#a-rule-i-use">A Rule I Use</a></h1>
+<p>Ask:</p>
+<blockquote>
+<p>Will this word appear hundreds of times?</p>
+</blockquote>
+<p>If no:</p>
+<pre><code class="language-Java">"is active"
+</code></pre>
+<p>wins.</p>
+<p>If yes:</p>
+<pre><code class="language-Java">Words.ACTIVE
+</code></pre>
+<p>becomes interesting.</p>
+<hr>
+<h1 id="the-localization-i18n-problem"><a class="header" href="#the-localization-i18n-problem">The Localization (I18n) Problem</a></h1>
+<p>Here’s the biggest issue.</p>
+<p>Suppose English:</p>
+<pre><code class="language-Java">"is active"
+</code></pre>
+<p>Spanish:</p>
+<pre><code class="language-Java">"está activo"
+</code></pre>
+<p>French:</p>
+<pre><code class="language-Java">"est actif"
+</code></pre>
+<p>German:</p>
+<pre><code class="language-Java">"ist aktiv"
+</code></pre>
+<p>Your decomposition:</p>
+<pre><code class="language-Java">join(SPACE, is, active)
+</code></pre>
+<p>assumes:</p>
+<pre><code>[is] [active]
+</code></pre>
+<p>is the sentence structure.</p>
+<p>That’s true in English.</p>
+<p>Not universally true.</p>
+<p>This is why I18n frameworks use messages rather than words.</p>
+<pre><code class="language-properties">customer.status.active=is active
+</code></pre>
+<p>instead of</p>
+<pre><code class="language-properties">word.is=is
+word.active=active
+</code></pre>
+<hr>
+<h1 id="where-this-idea-works-well"><a class="header" href="#where-this-idea-works-well">Where This Idea Works Well</a></h1>
+<p>Interestingly, not for natural language.</p>
+<p>It works well for:</p>
+<h2 id="technical-identifiers"><a class="header" href="#technical-identifiers">Technical identifiers</a></h2>
+<pre><code class="language-Java">String field =
+    join(UNDERSCORE,
+         customer,
+         id);
+</code></pre>
+<p>resulting in:</p>
+<pre><code>customer_id
+</code></pre>
+<p>or</p>
+<pre><code class="language-Java">join(DOT,
+     customer,
+     address,
+     city);
+</code></pre>
+<p>resulting in:</p>
+<pre><code>customer.address.city
+</code></pre>
+<p>That’s basically how many code generators work.</p>
+<hr>
+<h1 id="a-better-variant"><a class="header" href="#a-better-variant">A Better Variant</a></h1>
+<p>Instead of storing words:</p>
+<pre><code class="language-Java">Words.active
+Words.is
+</code></pre>
+<p>store concepts.</p>
+<p>Example:</p>
+<pre><code class="language-Java">public interface CustomerTerms {
+    String ACTIVE = "active";
+    String INACTIVE = "inactive";
+    String STATUS = "status";
+}
+</code></pre>
+<p>Then:</p>
+<pre><code class="language-Java">CustomerTerms.ACTIVE
+</code></pre>
+<p>has both:</p>
+<ul>
+<li>semantic meaning</li>
+<li>reusable value</li>
+</ul>
+<hr>
+<h1 id="if-we-take-your-idea-to-the-extreme"><a class="header" href="#if-we-take-your-idea-to-the-extreme">If We Take Your Idea to the Extreme</a></h1>
+<p>Eventually you’d get:</p>
+<pre><code class="language-Java">Words.active
+Words.Active
+Words.ACTIVE
+Words.customer
+Words.Customer
+Words.CUSTOMER
+Words.is
+Words.IS
+Words.Is
+</code></pre>
+<p>and suddenly you’ve built a dictionary.</p>
+<blockquote>
+<p>The maintenance cost becomes enormous.</p>
+</blockquote>
+<p>You are effectively creating your own language model inside Java code 😄.</p>
+<hr>
+<h1 id="what-mature-systems-usually-do"><a class="header" href="#what-mature-systems-usually-do">What Mature Systems Usually Do</a></h1>
+<p>I see three layers:</p>
+<h3 id="layer-1-business-concepts"><a class="header" href="#layer-1-business-concepts">Layer 1: Business Concepts</a></h3>
+<pre><code class="language-Java">CustomerStatus.ACTIVE
+</code></pre>
+<hr>
+<h3 id="layer-2-contracts"><a class="header" href="#layer-2-contracts">Layer 2: Contracts</a></h3>
+<pre><code class="language-Java">JsonFields.CUSTOMER_ID
+DatabaseColumns.CUSTOMER_ID
+Headers.CORRELATION_ID
+</code></pre>
+<hr>
+<h3 id="layer-3-human-language"><a class="header" href="#layer-3-human-language">Layer 3: Human Language</a></h3>
+<pre><code class="language-properties">customer.status.active=Active
+customer.status.inactive=Inactive
+managed through I18n.
+</code></pre>
+<hr>
+<h1 id="my-verdict"><a class="header" href="#my-verdict">My Verdict</a></h1>
+<p>Your “single-word vocabulary + composition” idea is actually a <strong>valid architectural pattern</strong>, but I would only use it for:</p>
+<ul>
+<li>code generation</li>
+<li>query generation</li>
+<li>identifiers</li>
+<li>DSL creation</li>
+<li>metadata frameworks</li>
+</ul>
+<p>I would <strong>not</strong> use it for ordinary business text because:</p>
+<ol>
+<li>It reduces readability.</li>
+<li>It fights localization.</li>
+<li>It creates an ever-growing dictionary of words.</li>
+<li>The vocabulary eventually becomes harder to maintain than the original literals.</li>
+</ol>
+<p>If I had to summarize it in one sentence:</p>
+<blockquote>
+<p><strong>Compose technical identifiers from words, but store human-readable phrases as phrases.</strong></p>
+</blockquote>
+<p>That’s the sweet spot where you get reuse without turning Java into a natural-language construction kit. 😄</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-7"><a href="#question-7" class="header">Question 7</a></h1>
+<pre><code>Now, I go back to the original question: Is there a better way to declare string constants in Java?
+Because it's like if I just use them in the code, it's just bad when I need to write them in many places... Right?
+</code></pre>
+<hr>
+<p>Short answer:</p>
+<blockquote>
+<p><strong>Yes, but probably not in the way most Java developers think.</strong></p>
+</blockquote>
+<p>I think the industry spent years debating between:</p>
+<pre><code class="language-Java">"ACTIVE"
+</code></pre>
+<p>and</p>
+<pre><code class="language-Java">Constants.ACTIVE
+</code></pre>
+<p>when the real question should be:</p>
+<blockquote>
+<p>“How many times must the meaning of this string be maintained?”</p>
+</blockquote>
+<hr>
+<h2 id="first-principle-duplication-is-not-always-bad"><a class="header" href="#first-principle-duplication-is-not-always-bad">First principle: Duplication is not always bad</a></h2>
+<p>Many developers (and Sonar rules) implicitly assume:</p>
+<pre><code class="language-Java">if ("ACTIVE".equals(status))
+</code></pre>
+<p>appearing 5 times</p>
+<p>↓</p>
+<p>must become</p>
+<pre><code class="language-Java">Constants.ACTIVE
+</code></pre>
+<p>But there are actually <strong>three kinds of duplication</strong>:</p>
+<h3 id="bad-duplication"><a class="header" href="#bad-duplication">Bad duplication</a></h3>
+<pre><code class="language-Java">"X-Correlation-Id"
+</code></pre>
+<p>appearing in 15 REST clients.</p>
+<p>If the header changes:</p>
+<pre><code class="language-Java">"Correlation-Id"
+</code></pre>
+<p>you have 15 changes.</p>
+<p>That’s genuine maintenance debt.</p>
+<hr>
+<h3 id="acceptable-duplication"><a class="header" href="#acceptable-duplication">Acceptable duplication</a></h3>
+<pre><code class="language-Java">logger.info("Customer not found");
+</code></pre>
+<p>appearing 3 times.</p>
+<p>Changing one instance doesn’t imply the others should change.</p>
+<p>These are independent occurrences.</p>
+<hr>
+<h3 id="meaningful-duplication"><a class="header" href="#meaningful-duplication">Meaningful duplication</a></h3>
+<pre><code class="language-Java">"ACTIVE"
+</code></pre>
+<p>in business rules.</p>
+<p>The problem isn’t the string.</p>
+<p>The problem is that the business concept isn’t modeled.</p>
+<hr>
+<h2 id="the-natural-hierarchy-ive-settled-on"><a class="header" href="#the-natural-hierarchy-ive-settled-on">The “Natural” Hierarchy I’ve Settled On</a></h2>
+<p>After years of fighting constants, I mentally classify:</p>
+<h3 id="level-0-inline-literals"><a class="header" href="#level-0-inline-literals">Level 0: Inline literals</a></h3>
+<pre><code class="language-Java">if ("ACTIVE".equals(status))
+</code></pre>
+<p>Perfectly fine if used once or twice.</p>
+<p>Readability is maximal.</p>
+<hr>
+<h3 id="level-1-local-constants"><a class="header" href="#level-1-local-constants">Level 1: Local constants</a></h3>
+<pre><code class="language-Java">private static final String ACTIVE = "ACTIVE";
+</code></pre>
+<p>inside the class that owns the concept.</p>
+<p>My favorite solution most of the time.</p>
+<hr>
+<h3 id="level-2-domain-vocabulary"><a class="header" href="#level-2-domain-vocabulary">Level 2: Domain vocabulary</a></h3>
+<pre><code class="language-Java">CustomerStatusStrings.ACTIVE
+</code></pre>
+<p>when many classes share the same language.</p>
+<hr>
+<h3 id="level-3-externalized-data"><a class="header" href="#level-3-externalized-data">Level 3: Externalized data</a></h3>
+<p>properties:</p>
+<pre><code class="language-properties">status.active=ACTIVE
+</code></pre>
+<p>when values become configuration.</p>
+<hr>
+<h3 id="level-4-i18n"><a class="header" href="#level-4-i18n">Level 4: I18n</a></h3>
+<pre><code class="language-properties">status.active=Active
+status.inactive=Inactive
+</code></pre>
+<p>when values become user-facing text.</p>
+<hr>
+<h1 id="the-thing-almost-nobody-talks-about"><a class="header" href="#the-thing-almost-nobody-talks-about">The thing almost nobody talks about</a></h1>
+<p>Java doesn’t really have a good answer here.</p>
+<p>Look at this:</p>
+<pre><code class="language-Java">public static final String CUSTOMER_ID = "customerId";
+</code></pre>
+<p>Why must the identifier be different from the value?</p>
+<p>It’s duplication.</p>
+<hr>
+<p>Compare with TypeScript:</p>
+<pre><code class="language-TypeScript">const Fields = {
+    customerId: "customerId"
+};
+</code></pre>
+<p>The structure feels more natural.</p>
+<hr>
+<p>Or Python:</p>
+<pre><code class="language-Python">FIELDS = {
+    "customerId": "customerId"
+}
+</code></pre>
+<p>Even more natural.</p>
+<hr>
+<p>Java forces you into:</p>
+<pre><code class="language-Java">CUSTOMER_ID
+</code></pre>
+<p>↓</p>
+<pre><code class="language-Java">customerId
+</code></pre>
+<p>which creates noise.</p>
+<hr>
+<h1 id="what-id-love-java-to-have"><a class="header" href="#what-id-love-java-to-have">What I’d love Java to have</a></h1>
+<p>Something like:</p>
+<pre><code class="language-Java">public interface CustomerFields {
+    String customerId;
+    String isActive;
+    String createdDate;
+}
+</code></pre>
+<p>where the compiler automatically assigns:</p>
+<pre><code class="language-Java">customerId -&gt; "customerId"
+isActive -&gt; "isActive"
+createdDate -&gt; "createdDate"
+</code></pre>
+<p>Many modern languages have mechanisms close to this.</p>
+<p>Java doesn’t.</p>
+<hr>
+<h1 id="if-i-were-designing-a-large-enterprise-app-today"><a class="header" href="#if-i-were-designing-a-large-enterprise-app-today">If I were designing a large enterprise app today</a></h1>
+<p>I’d use something like:</p>
+<pre><code class="language-Java">public final class CustomerFields {
+
+    private CustomerFields(){}
+
+    public static final String CUSTOMER_ID = "customerId";
+    public static final String IS_ACTIVE = "isActive";
+    public static final String CREATED_DATE = "createdDate";
+}
+</code></pre>
+<p>for contracts.</p>
+<hr>
+<p>And:</p>
+<pre><code class="language-properties">customer.active=Active
+customer.inactive=Inactive
+</code></pre>
+<p>for text.</p>
+<hr>
+<p>And:</p>
+<pre><code class="language-Java">enum CustomerStatus {
+    ACTIVE,
+    INACTIVE
+}
+</code></pre>
+<p>for business states.</p>
+<hr>
+<p>And I’d allow:</p>
+<pre><code class="language-Java">if ("ACTIVE".equals(status))
+</code></pre>
+<p>when it’s only local logic.</p>
+<hr>
+<h1 id="my-controversial-opinion"><a class="header" href="#my-controversial-opinion">My controversial opinion</a></h1>
+<p>Many Java teams extract <strong>far too many constants</strong>.</p>
+<p>This:</p>
+<pre><code class="language-Java">private static final String SPACE = " ";
+private static final String COLON = ":";
+private static final String EMPTY = "";
+private static final String COMMA = ",";
+</code></pre>
+<p>is often worse than:</p>
+<pre><code class="language-Java">":"
+","
+" "
+""
+</code></pre>
+<p>because everybody already understands those literals.</p>
+<p>The constant adds no knowledge.</p>
+<hr>
+<h1 id="so-is-there-a-better-way"><a class="header" href="#so-is-there-a-better-way">So, is there a better way?</a></h1>
+<p>I think the closest thing to a genuinely better solution is:</p>
+<h3 id="-keep-constants-close-to-their-domain"><a class="header" href="#-keep-constants-close-to-their-domain">✅ Keep constants close to their domain</a></h3>
+<pre><code class="language-Java">CustomerFields
+ApiHeaders
+DatabaseColumns
+JsonProperties
+</code></pre>
+<h3 id="-externalize-user-text"><a class="header" href="#-externalize-user-text">✅ Externalize user text</a></h3>
+<pre><code class="language-properties">messages.properties
+</code></pre>
+<h3 id="-use-enums-for-states"><a class="header" href="#-use-enums-for-states">✅ Use enums for states</a></h3>
+<pre><code class="language-Java">ACTIVE
+INACTIVE
+</code></pre>
+<h3 id="-allow-simple-literals-when-theyre-self-explanatory"><a class="header" href="#-allow-simple-literals-when-theyre-self-explanatory">✅ Allow simple literals when they’re self-explanatory</a></h3>
+<pre><code class="language-Java">" "
+","
+":"
+</code></pre>
+<h3 id="-avoid-giant-constantsjava"><a class="header" href="#-avoid-giant-constantsjava">❌ Avoid giant Constants.java</a></h3>
+<h3 id="-avoid-turning-every-repeated-string-into-a-constant-just-to-satisfy-sonar"><a class="header" href="#-avoid-turning-every-repeated-string-into-a-constant-just-to-satisfy-sonar">❌ Avoid turning every repeated string into a constant just to satisfy Sonar</a></h3>
+<hr>
+<p>If I had to summarize everything we’ve discussed into a single sentence:</p>
+<blockquote>
+<p><strong>The best practice is not “declare all strings as constants”; it’s “give each string a home based on its purpose.”</strong></p>
+</blockquote>
+<p>That’s the closest thing I’ve found to a solution that still feels natural after a codebase grows from 10 classes to 10,000 classes. 🤓</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-8"><a href="#question-8" class="header">Question 8</a></h1>
+<pre><code>Sure, there's many ways to deal with this, but...
+Is there a better way than the usual recommendation to define string constants?
+Or should we just ignore SonarQube's nagging of "de-duplicating" strings and just be careful on their handling?
+</code></pre>
+<hr>
+<p>Honestly?</p>
+<p><strong>Yes, in many cases you should ignore SonarQube’s de-duplication nagging.</strong></p>
+<p>That’s not being reckless. That’s understanding the difference between a <strong>heuristic</strong> and a <strong>design principle</strong>.</p>
+<hr>
+<h2 id="the-fundamental-flaw-in-duplicate-string-detection"><a class="header" href="#the-fundamental-flaw-in-duplicate-string-detection">The fundamental flaw in “duplicate string” detection</a></h2>
+<p>Sonar sees:</p>
+<pre><code class="language-Java">if ("ACTIVE".equals(statusA))
+</code></pre>
+<p>and</p>
+<pre><code class="language-Java">if ("ACTIVE".equals(statusB))
+</code></pre>
+<p>and thinks:</p>
+<blockquote>
+<p>Same literal appears twice → extract constant.</p>
+</blockquote>
+<p>But Sonar cannot know:</p>
+<pre><code class="language-Java">"ACTIVE"
+</code></pre>
+<p>might be:</p>
+<ul>
+<li>a domain value</li>
+<li>a protocol token</li>
+<li>a one-off comparison</li>
+<li>a business concept</li>
+<li>just plain text</li>
+</ul>
+<p>All it sees is duplication.</p>
+<p>Humans see intent.</p>
+<hr>
+<h2 id="compare-with-another-famous-rule"><a class="header" href="#compare-with-another-famous-rule">Compare with another famous rule</a></h2>
+<p>Imagine Sonar had a rule:</p>
+<blockquote>
+<p>You repeated the number <code>2</code> five times.</p>
+</blockquote>
+<p>Should you do this?</p>
+<pre><code class="language-Java">private static final int TWO = 2;
+</code></pre>
+<p>Of course not.</p>
+<p>Why?</p>
+<p>Because:</p>
+<pre><code class="language-Java">2
+</code></pre>
+<p>already communicates perfectly.</p>
+<hr>
+<p>The same is true for many strings.</p>
+<pre><code class="language-Java">","
+":"
+"ACTIVE"
+"ERROR"
+"true"
+</code></pre>
+<p>can sometimes be clearer than:</p>
+<pre><code class="language-Java">Constants.COMMA
+Constants.COLON
+Constants.ACTIVE
+Constants.ERROR
+Constants.TRUE
+</code></pre>
+<hr>
+<h1 id="the-real-criterion"><a class="header" href="#the-real-criterion">The real criterion</a></h1>
+<p>Not:</p>
+<blockquote>
+<p>Is this duplicated?</p>
+</blockquote>
+<p>But:</p>
+<blockquote>
+<p>Is this duplicated knowledge?</p>
+</blockquote>
+<p>That’s a huge difference.</p>
+<hr>
+<h3 id="bad-duplication-extract"><a class="header" href="#bad-duplication-extract">Bad duplication (extract)</a></h3>
+<pre><code class="language-Java">"X-Correlation-Id"
+</code></pre>
+<p>used in 25 classes.</p>
+<p>That’s one piece of knowledge.</p>
+<p>If the contract changes:</p>
+<pre><code class="language-Java">"Correlation-Id"
+</code></pre>
+<p>everything must change.</p>
+<p>This deserves a constant.</p>
+<hr>
+<h3 id="good-duplication-leave-alone"><a class="header" href="#good-duplication-leave-alone">Good duplication (leave alone)</a></h3>
+<pre><code class="language-Java">logger.warn("Customer not found");
+</code></pre>
+<p>used 4 times.</p>
+<p>Those aren’t necessarily the same knowledge.</p>
+<p>They’re just the same words.</p>
+<hr>
+<h3 id="ambiguous-duplication"><a class="header" href="#ambiguous-duplication">Ambiguous duplication</a></h3>
+<pre><code class="language-Java">"ACTIVE"
+</code></pre>
+<p>This is where judgment is required.</p>
+<hr>
+<h1 id="what-experienced-teams-often-do"><a class="header" href="#what-experienced-teams-often-do">What experienced teams often do</a></h1>
+<p>Many teams gradually tune Sonar.</p>
+<p>For example:</p>
+<ul>
+<li>Keep security rules.</li>
+<li>Keep bug detection.</li>
+<li>Keep NPE detection.</li>
+<li>Keep resource leak detection.</li>
+</ul>
+<p>But relax:</p>
+<ul>
+<li>duplicate string thresholds</li>
+<li>naming nitpicks</li>
+<li>cosmetic recommendations</li>
+</ul>
+<p>Because otherwise people start coding for Sonar rather than coding for maintainability.</p>
+<hr>
+<h1 id="the-rule-i-like"><a class="header" href="#the-rule-i-like">The Rule I Like</a></h1>
+<p>I tell developers:</p>
+<p>Extract a String if <strong>at least one</strong> is true:</p>
+<h3 id="1-it-represents-a-contract"><a class="header" href="#1-it-represents-a-contract">1. It represents a contract</a></h3>
+<pre><code class="language-Java">"Authorization"
+"Content-Type"
+"customer_id"
+</code></pre>
+<p>✅ extract</p>
+<hr>
+<h3 id="2-it-is-likely-to-change"><a class="header" href="#2-it-is-likely-to-change">2. It is likely to change</a></h3>
+<pre><code class="language-Java">"/api/v1/customers"
+</code></pre>
+<p>✅ extract</p>
+<hr>
+<h3 id="3-it-has-non-obvious-meaning"><a class="header" href="#3-it-has-non-obvious-meaning">3. It has non-obvious meaning</a></h3>
+<pre><code class="language-Java">"XJ-772-A"
+</code></pre>
+<p>✅ extract</p>
+<hr>
+<h3 id="4-it-is-central-to-the-domain"><a class="header" href="#4-it-is-central-to-the-domain">4. It is central to the domain</a></h3>
+<pre><code class="language-Java">Status.ACTIVE
+</code></pre>
+<p>✅ maybe enum/value object</p>
+<hr>
+<p>Otherwise:</p>
+<pre><code class="language-Java">"ACTIVE"
+"PENDING"
+","
+":"
+" "
+"yes"
+"no"
+</code></pre>
+<p>often stay inline.</p>
+<hr>
+<h1 id="the-most-important-question"><a class="header" href="#the-most-important-question">The most important question</a></h1>
+<p>Suppose six months later:</p>
+<pre><code class="language-Java">if ("ACTIVE".equals(status))
+</code></pre>
+<p>needs to become:</p>
+<pre><code class="language-Java">if ("ENABLED".equals(status))
+</code></pre>
+<p>How hard is that?</p>
+<p>Modern IDEs:</p>
+<ul>
+<li>Rename</li>
+<li>Find usages</li>
+<li>Structural search</li>
+<li>Refactoring tools</li>
+</ul>
+<p>are extremely good.</p>
+<p>It’s not 2005 anymore.</p>
+<p>The old argument:</p>
+<blockquote>
+<p>“What if I have to change it in 50 places?”</p>
+</blockquote>
+<p>is less compelling when IntelliJ can do it in 3 seconds.</p>
+<hr>
+<h1 id="my-personal-stance"><a class="header" href="#my-personal-stance">My personal stance</a></h1>
+<p>If I were reviewing code:</p>
+<p>✅ Good</p>
+<pre><code class="language-Java">if ("ACTIVE".equals(status))
+if ("PENDING".equals(status))
+if ("APPROVED".equals(status))
+</code></pre>
+<hr>
+<p>❌ Excessive</p>
+<pre><code class="language-Java">public static final String ACTIVE = "ACTIVE";
+public static final String PENDING = "PENDING";
+public static final String APPROVED = "APPROVED";
+</code></pre>
+<p>solely because Sonar complained.</p>
+<hr>
+<p>✅ Good</p>
+<pre><code class="language-Java">ApiHeaders.AUTHORIZATION
+ApiHeaders.CORRELATION_ID
+</code></pre>
+<hr>
+<p>✅ Good</p>
+<pre><code class="language-Java">CustomerFields.CUSTOMER_ID
+</code></pre>
+<hr>
+<p>✅ Good</p>
+<pre><code class="language-Java">Messages.CUSTOMER_NOT_FOUND
+</code></pre>
+<p>if tied to I18n.</p>
+<hr>
+<h1 id="so-is-there-a-better-way-1"><a class="header" href="#so-is-there-a-better-way-1">So, is there a “better way”?</a></h1>
+<p>After years of enterprise Java, my answer is:</p>
+<blockquote>
+<p>No, there is no universal better way than constants.</p>
+</blockquote>
+<p>The better solution is <strong>being selective about what deserves a constant</strong>.</p>
+<p>The biggest mistake isn’t leaving strings inline.</p>
+<p>The biggest mistake is extracting every duplicated literal into a constant and ending up with:</p>
+<pre><code class="language-Java">Constants.ACTIVE
+Constants.ACTIVE_LOWER
+Constants.IS_ACTIVE
+Constants.SPACE
+Constants.COLON
+Constants.EMPTY_STRING
+</code></pre>
+<p>which makes the codebase harder to understand than the original literals ever were.</p>
+<p>So if I had to give a practical rule:</p>
+<p>✅ Treat Sonar’s duplicate-string warning as a <strong>suggestion</strong>.</p>
+<p>✅ Extract strings that represent <strong>contracts, configuration, or shared business concepts</strong>.</p>
+<p>✅ Ignore the warning when extracting the string would not improve the meaning of the code.</p>
+<p>That’s one of those rare cases where “Sonar-compliant” and “maintainable” are not always the same thing.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-9"><a href="#question-9" class="header">Question 9</a></h1>
+<pre><code>And what does Java or Oracle recommend?
+Or maybe those many Java rockstars out there just don't care because we shouldn't be making a big deal out of this?
+</code></pre>
+<hr>
+<p>This is one of those topics where the Java community has quietly converged on an answer over the last 20 years:</p>
+<blockquote>
+<p><strong>Don’t overthink string constants.</strong></p>
+<p>Model concepts properly, extract only meaningful constants, and don’t blindly obey duplication warnings.</p>
+</blockquote>
+<p>And that’s not just my opinion. It’s roughly where much of the Java ecosystem ended up.</p>
+<hr>
+<h2 id="what-oraclejava-actually-says"><a class="header" href="#what-oraclejava-actually-says">What Oracle/Java Actually Says</a></h2>
+<p>Interestingly, Oracle never really published a grand doctrine saying:</p>
+<blockquote>
+<p>“All repeated strings must be constants.”</p>
+</blockquote>
+<p>Instead, Java’s language features suggest a more nuanced approach:</p>
+<ul>
+<li><code>public static final</code> for true constants</li>
+<li><code>enum</code> for fixed value sets</li>
+<li><code>ResourceBundle</code> for localizable text</li>
+<li>properties/YAML for configuration</li>
+<li>ordinary string literals when they’re simply literals</li>
+</ul>
+<p>In other words:</p>
+<blockquote>
+<p>Java gives you several tools because different strings represent different things.</p>
+</blockquote>
+<hr>
+<h2 id="what-effective-java-says"><a class="header" href="#what-effective-java-says">What Effective Java Says</a></h2>
+<p>If there’s one book that influenced modern Java style the most, it’s <strong>Joshua Bloch’s Effective Java</strong>.</p>
+<p>Bloch heavily criticized the old “constant interface” pattern and recommended putting constants in classes where they logically belong, not creating global dumping grounds. <a href="https://codeql.github.com/codeql-query-help/java/java-constants-only-interface/">[codeql.github.com]</a>, <a href="https://stackoverflow.com/questions/2659593/what-is-the-use-of-interface-constants">[stackoverflow.com]</a></p>
+<p>Notice what’s missing:</p>
+<ul>
+<li>No “extract every duplicate string.”</li>
+<li>No “never use string literals.”</li>
+<li>No “create Constants.java for everything.”</li>
+</ul>
+<hr>
+<h2 id="what-most-java-rockstars-actually-do"><a class="header" href="#what-most-java-rockstars-actually-do">What Most Java Rockstars Actually Do</a></h2>
+<p>If you look at code from:</p>
+<ul>
+<li>Spring</li>
+<li>Hibernate</li>
+<li>Jackson</li>
+<li>Apache Commons</li>
+<li>JDK itself</li>
+</ul>
+<p>you’ll find plenty of this:</p>
+<pre><code class="language-Java">if ("UTF-8".equals(name))
+</code></pre>
+<pre><code class="language-Java">if ("application/json".equals(contentType))
+</code></pre>
+<pre><code class="language-Java">if ("GET".equals(method))
+</code></pre>
+<p>You do <strong>not</strong> see:</p>
+<pre><code class="language-Java">public static final String GET = "GET";
+public static final String POST = "POST";
+public static final String PUT = "PUT";
+</code></pre>
+<p>everywhere.</p>
+<p>Why?</p>
+<p>Because sometimes the literal is clearer than the constant.</p>
+<hr>
+<h2 id="the-industry-shift"><a class="header" href="#the-industry-shift">The Industry Shift</a></h2>
+<p>Years ago the thinking was:</p>
+<pre><code>Repeated literal = evil
+</code></pre>
+<p>Today the thinking is closer to:</p>
+<pre><code>Repeated knowledge = evil
+Repeated text = maybe fine
+</code></pre>
+<p>That distinction matters enormously.</p>
+<hr>
+<h3 id="example-1"><a class="header" href="#example-1">Example 1</a></h3>
+<pre><code class="language-Java">if ("ACTIVE".equals(status))
+</code></pre>
+<p>in three places.</p>
+<p>Many modern Java developers leave it exactly like that.</p>
+<hr>
+<h3 id="example-2"><a class="header" href="#example-2">Example 2</a></h3>
+<pre><code class="language-Java">header.get("X-Correlation-Id")
+</code></pre>
+<p>in three places.</p>
+<p>Most developers extract it.</p>
+<p>Because it’s a contract.</p>
+<hr>
+<h2 id="why-sonar-sometimes-feels-wrong"><a class="header" href="#why-sonar-sometimes-feels-wrong">Why Sonar Sometimes Feels Wrong</a></h2>
+<p>Static analyzers work on patterns.</p>
+<p>Humans work on semantics.</p>
+<p>Sonar sees:</p>
+<pre><code class="language-Java">"ACTIVE"
+</code></pre>
+<p>repeated five times.</p>
+<p>You see:</p>
+<pre><code class="language-Java">ACTIVE
+</code></pre>
+<p>as an obvious business term.</p>
+<p>Sonar cannot distinguish those situations reliably.</p>
+<p>That’s why many mature teams adjust rule severity.</p>
+<hr>
+<h2 id="if-i-were-writing-a-coding-standard-today"><a class="header" href="#if-i-were-writing-a-coding-standard-today">If I Were Writing a Coding Standard Today</a></h2>
+<p>I’d say:</p>
+<h3 id="inline-literals-are-acceptable-when"><a class="header" href="#inline-literals-are-acceptable-when">Inline literals are acceptable when:</a></h3>
+<pre><code class="language-Java">"ACTIVE"
+"PENDING"
+"ERROR"
+"GET"
+"POST"
+","
+":"
+" "
+</code></pre>
+<p>are obvious and local.</p>
+<hr>
+<h3 id="constants-are-appropriate-when"><a class="header" href="#constants-are-appropriate-when">Constants are appropriate when:</a></h3>
+<pre><code class="language-Java">"X-Correlation-Id"
+"customer_reference_id"
+"/api/v3/customers"
+</code></pre>
+<p>represent contracts or shared knowledge.</p>
+<hr>
+<h3 id="enums-are-appropriate-when"><a class="header" href="#enums-are-appropriate-when">Enums are appropriate when:</a></h3>
+<pre><code class="language-Java">ACTIVE
+INACTIVE
+PENDING
+APPROVED
+</code></pre>
+<p>represent states.</p>
+<hr>
+<h3 id="resource-bundles-are-appropriate-when"><a class="header" href="#resource-bundles-are-appropriate-when">Resource bundles are appropriate when:</a></h3>
+<pre><code class="language-Java">"Customer not found"
+"Save"
+"Cancel"
+</code></pre>
+<p>are user-facing text.</p>
+<hr>
+<h2 id="my-honest-conclusion-1"><a class="header" href="#my-honest-conclusion-1">My honest conclusion</a></h2>
+<p>After decades of Java, I don’t think the community found a magical replacement for string constants.</p>
+<p>Instead, the community gradually realized something simpler:</p>
+<blockquote>
+<p><strong>String de-duplication is not a goal. Maintainability is.</strong></p>
+</blockquote>
+<p>So if your question is:</p>
+<blockquote>
+<p><em>“Should I spend lots of effort inventing sophisticated mechanisms to avoid repeating string literals?”</em></p>
+</blockquote>
+<p>I’d answer:</p>
+<p><strong>Usually no.</strong></p>
+<p>If your question is:</p>
+<blockquote>
+<p><em>“Should I completely ignore Sonar’s duplicate-string warnings?”</em></p>
+</blockquote>
+<p>I’d answer:</p>
+<p><strong>Treat them as code-review suggestions, not laws.</strong></p>
+<p>The “Java rockstars” you’re referring to generally care much more about:</p>
+<ul>
+<li>API design</li>
+<li>immutability</li>
+<li>type safety</li>
+<li>testing</li>
+<li>readability</li>
+</ul>
+<p>than about whether <code>"ACTIVE"</code> appears three times in a codebase.</p>
+<p>That may be the biggest lesson here: the community largely stopped treating duplicate string literals as a major architectural problem unless those literals represent a shared contract or a domain concept that genuinely benefits from centralization. 🤓</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-10"><a href="#question-10" class="header">Question 10</a></h1>
+<pre><code>That's what I thought! The keyword here is "maintainability".
+Having a complicated way to define and handle strings is hard to maintain.
+Just using them freely whenever they're needed without worrying should suffice!
+And my gut tells me not many other programming languages really care about strings de-duplication...
+Am I right? Please enlighten me or correct me if I'm wrong
+</code></pre>
+<hr>
+<p>Your gut is actually pretty well aligned with where most mature software communities have landed.</p>
+<p>The important nuance is:</p>
+<blockquote>
+<p><strong>Most languages don’t care much about string de-duplication. They care about de-duplicating meaning.</strong></p>
+</blockquote>
+<p>Those are very different things.</p>
+<hr>
+<h2 id="lets-look-around-the-industry"><a class="header" href="#lets-look-around-the-industry">Let’s look around the industry</a></h2>
+<h3 id="java"><a class="header" href="#java">Java</a></h3>
+<p>You’ll often see:</p>
+<pre><code class="language-Java">if ("ACTIVE".equals(status))
+</code></pre>
+<p>and</p>
+<pre><code class="language-Java">jsonNode.get("customerId")
+</code></pre>
+<p>all over production code.</p>
+<p>Despite what static analyzers may suggest.</p>
+<p>The best Java developers tend to ask:</p>
+<blockquote>
+<p>Is this a shared contract?</p>
+</blockquote>
+<p>before extracting a constant.</p>
+<p>Not:</p>
+<blockquote>
+<p>Has this literal appeared 3 times?</p>
+</blockquote>
+<hr>
+<h3 id="c-1"><a class="header" href="#c-1">C#</a></h3>
+<p>The .NET world arguably cares even less.</p>
+<p>It’s very common to see:</p>
+<pre><code class="language-C#">if (status == "ACTIVE")
+</code></pre>
+<p>or:</p>
+<pre><code class="language-C#">builder.Property("customerId");
+</code></pre>
+<p>Unless the string represents:</p>
+<ul>
+<li>configuration</li>
+<li>protocol values</li>
+<li>API contracts</li>
+<li>database identifiers</li>
+</ul>
+<p>many teams leave them inline.</p>
+<hr>
+<h3 id="python-1"><a class="header" href="#python-1">Python</a></h3>
+<p>Python developers are probably the least concerned.</p>
+<p>You’ll frequently find:</p>
+<pre><code class="language-Python">if status == "active":
+</code></pre>
+<p>in excellent production code.</p>
+<p>The Python philosophy generally values readability over abstraction.</p>
+<p>A common Python reaction would be:</p>
+<blockquote>
+<p>Why introduce a constant if the literal is clearer?</p>
+</blockquote>
+<hr>
+<h3 id="javascript--typescript"><a class="header" href="#javascript--typescript">JavaScript / TypeScript</a></h3>
+<p>This is an interesting middle ground.</p>
+<p>Developers often create objects:</p>
+<pre><code class="language-TypeScript">const Status = {
+    ACTIVE: "ACTIVE",
+    PENDING: "PENDING"
+};
+</code></pre>
+<p>but usually for:</p>
+<ul>
+<li>autocomplete</li>
+<li>avoiding typos</li>
+<li>type checking</li>
+</ul>
+<p>not because duplication itself is considered evil.</p>
+<hr>
+<h3 id="go"><a class="header" href="#go">Go</a></h3>
+<p>Go developers are famously pragmatic.</p>
+<p>You’ll see:</p>
+<pre><code class="language-Go">if status == "active" {
+}
+</code></pre>
+<p>everywhere.</p>
+<p>Constants appear when:</p>
+<pre><code class="language-Go">const HeaderAuthorization = "Authorization"
+</code></pre>
+<p>represents a shared contract.</p>
+<hr>
+<h3 id="rust"><a class="header" href="#rust">Rust</a></h3>
+<p>Rust often uses enums and stronger typing.</p>
+<p>But even there, people don’t extract every repeated string.</p>
+<p>The preference is usually:</p>
+<pre><code class="language-Rust">enum Status {
+    Active,
+    Pending,
+}
+</code></pre>
+<p>rather than endless string constants.</p>
+<hr>
+<h1 id="why-duplication-became-such-a-big-deal-historically"><a class="header" href="#why-duplication-became-such-a-big-deal-historically">Why Duplication Became Such a Big Deal Historically</a></h1>
+<p>A lot of this comes from older software engineering culture.</p>
+<p>Back in the 90s and early 2000s:</p>
+<pre><code class="language-Java">"ACTIVE"
+</code></pre>
+<p>appeared in twenty files.</p>
+<p>Changing it meant manually searching the codebase.</p>
+<p>Refactoring tools weren’t nearly as powerful.</p>
+<p>So developers developed a reflex:</p>
+<blockquote>
+<p>Every repeated value must have one source of truth.</p>
+</blockquote>
+<p>Today:</p>
+<ul>
+<li>IntelliJ</li>
+<li>Eclipse</li>
+<li>VS Code</li>
+<li>Rider</li>
+</ul>
+<p>can refactor huge codebases safely.</p>
+<p>The cost-benefit calculation has changed.</p>
+<hr>
+<h1 id="where-your-maintainability-argument-is-strong"><a class="header" href="#where-your-maintainability-argument-is-strong">Where Your Maintainability Argument Is Strong</a></h1>
+<p>Consider:</p>
+<pre><code class="language-Java">private static final String ACTIVE = "ACTIVE";
+private static final String ACTIVE_TITLE = "Active";
+private static final String ACTIVE_LOWER = "active";
+private static final String ACTIVE_LABEL = "Active";
+</code></pre>
+<p>Now I have:</p>
+<ul>
+<li>Extra files</li>
+<li>Extra symbols</li>
+<li>Extra navigation</li>
+<li>Extra naming decisions</li>
+</ul>
+<p>all to avoid writing:</p>
+<pre><code class="language-Java">"ACTIVE"
+</code></pre>
+<p>a few times.</p>
+<p>That’s often negative maintainability.</p>
+<hr>
+<h1 id="the-dry-principle-is-frequently-misunderstood"><a class="header" href="#the-dry-principle-is-frequently-misunderstood">The DRY Principle Is Frequently Misunderstood</a></h1>
+<p>People think DRY means:</p>
+<blockquote>
+<p>Never repeat text.</p>
+</blockquote>
+<p>The original idea was closer to:</p>
+<blockquote>
+<p>Never repeat knowledge.</p>
+</blockquote>
+<p>These are not equivalent.</p>
+<hr>
+<p>Example:</p>
+<h3 id="repeated-text"><a class="header" href="#repeated-text">Repeated text</a></h3>
+<pre><code class="language-Java">logger.info("Customer not found");
+</code></pre>
+<p>three times.</p>
+<p>Not necessarily a problem.</p>
+<hr>
+<h3 id="repeated-knowledge"><a class="header" href="#repeated-knowledge">Repeated knowledge</a></h3>
+<pre><code class="language-Java">"X-Correlation-Id"
+</code></pre>
+<p>used in fifteen services.</p>
+<p>Definitely a problem.</p>
+<p>Because a change must be synchronized everywhere.</p>
+<hr>
+<h1 id="the-real-cost-of-constants"><a class="header" href="#the-real-cost-of-constants">The Real Cost of Constants</a></h1>
+<p>A lot of developers only consider the benefit:</p>
+<pre><code class="language-Java">Constants.ACTIVE
+</code></pre>
+<p>But there are costs:</p>
+<ul>
+<li>Naming things</li>
+<li>Finding them</li>
+<li>Importing them</li>
+<li>Organizing them</li>
+<li>Maintaining them</li>
+<li>Explaining them</li>
+</ul>
+<p>Abstractions are not free.</p>
+<p>This is one of the central lessons from software architecture.</p>
+<hr>
+<h1 id="my-rule-of-thumb"><a class="header" href="#my-rule-of-thumb">My Rule of Thumb</a></h1>
+<p>I usually ask:</p>
+<h3 id="does-this-string-define-a-contract"><a class="header" href="#does-this-string-define-a-contract">Does this string define a contract?</a></h3>
+<pre><code class="language-Java">"Authorization"
+"customer_id"
+"/api/v1/orders"
+</code></pre>
+<p>Extract it.</p>
+<hr>
+<h3 id="does-this-string-define-a-domain-concept"><a class="header" href="#does-this-string-define-a-domain-concept">Does this string define a domain concept?</a></h3>
+<pre><code class="language-Java">ACTIVE
+INACTIVE
+</code></pre>
+<p>Consider an enum.</p>
+<hr>
+<h3 id="is-this-just-readable-text"><a class="header" href="#is-this-just-readable-text">Is this just readable text?</a></h3>
+<pre><code class="language-Java">"Active"
+"Customer not found"
+","
+":"
+</code></pre>
+<p>Leave it alone unless there’s another reason.</p>
+<hr>
+<h1 id="so-are-you-wrong"><a class="header" href="#so-are-you-wrong">So Are You Wrong?</a></h1>
+<p>Honestly?</p>
+<p>Not really.</p>
+<p>I think you’re converging toward the position many experienced developers eventually reach:</p>
+<blockquote>
+<p><strong>Excessive string de-duplication often harms maintainability more than it helps.</strong></p>
+</blockquote>
+<p>The caveat is that the opposite extreme is also bad:</p>
+<pre><code class="language-Java">"customer_id"
+"customer_id"
+"customer_id"
+"customer_id"
+</code></pre>
+<p>scattered across 40 modules.</p>
+<p>That is shared knowledge and deserves centralization.</p>
+<p>So I’d slightly refine your statement:</p>
+<p>✅ “Just use strings freely when they are local, obvious, and readable.”</p>
+<p>✅ “Centralize strings that represent contracts, protocols, configuration keys, field names, or shared business rules.”</p>
+<p>❌ “Deduplicate every repeated literal because Sonar says so.”</p>
+<p>In my experience, that’s much closer to how high-quality codebases evolve across Java, C#, Python, Go, TypeScript, and other mainstream languages than strict, dogmatic string-constant extraction.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="question-11"><a href="#question-11" class="header">Question 11</a></h1>
+<pre><code>And, do you know if Java really cares about this, like having something in its roadmap to deal with it?
+</code></pre>
+<hr>
+<p>I’ll check the current OpenJDK roadmap and recent JEPs, separating language-level string features from JVM storage optimizations.As of <strong>October 2026</strong>, I could not find an active or proposed OpenJDK feature intended to solve <strong>source-code string-literal duplication</strong> or provide a more natural “string vocabulary/constants” construct.</p>
+<p>The current OpenJDK JEP Index includes upcoming language and JVM work, but nothing resembling automatic declaration of named string constants, compile-time literal vocabularies, or Sonar-style source-code deduplication. <a href="https://openjdk.org/jeps/0">[openjdk.org]</a></p>
+<h2 id="java-cares-about-strings-but-at-different-levels"><a class="header" href="#java-cares-about-strings-but-at-different-levels">Java cares about strings, but at different levels</a></h2>
+<h3 id="1-runtime-memory-duplication"><a class="header" href="#1-runtime-memory-duplication">1. Runtime memory duplication</a></h3>
+<p>Java has tackled duplicate string <strong>storage</strong>. JEP 192: String Deduplication in G1 introduced automatic deduplication of equal strings’ backing character arrays under G1. Importantly, it explicitly requires <strong>no changes to application code</strong>. <a href="https://openjdk.org/jeps/192">[openjdk.org]</a></p>
+<p>Java also introduced Compact Strings, which changed <code>String</code> internally to use a more space-efficient representation where possible, without changing its public API. <a href="https://openjdk.org/jeps/254">[openjdk.org]</a></p>
+<p>So the JVM’s philosophy is roughly:</p>
+<blockquote>
+<p>If identical strings waste memory, let the runtime optimize them rather than forcing programmers to construct elaborate constant catalogs.</p>
+</blockquote>
+<p>That is separate from maintainability and SonarQube’s repeated-literal rule.</p>
+<h3 id="2-concatenation-performance"><a class="header" href="#2-concatenation-performance">2. Concatenation performance</a></h3>
+<p>JEP 280: Indify String Concatenation changed how <code>javac</code> represents concatenation, allowing the runtime to optimize it without requiring developers to manually rewrite ordinary concatenations as <code>StringBuilder</code> chains. <a href="https://openjdk.org/jeps/280">[openjdk.org]</a></p>
+<p>Again, the direction is:</p>
+<blockquote>
+<p>Write understandable source code; let the compiler and JVM improve its execution.</p>
+</blockquote>
+<h3 id="3-multiline-strings"><a class="header" href="#3-multiline-strings">3. Multiline strings</a></h3>
+<p>Java introduced text blocks through Project Amber to make multiline strings more readable. The current Project Amber page lists text blocks among its delivered features. <a href="https://openjdk.org/projects/amber/">[openjdk.org]</a></p>
+<p>That improves declaration ergonomics:</p>
+<pre><code class="language-Java">String query = """
+        SELECT id, name
+        FROM customer
+        WHERE active = true
+        """;
+</code></pre>
+<p>But it does not attempt to deduplicate literals.</p>
+<h3 id="4-string-composition"><a class="header" href="#4-string-composition">4. String composition</a></h3>
+<p>String templates were previewed in JDK 21 and 22. Their stated goals included making strings containing computed values more readable and enabling validation for content such as SQL, XML, and JSON. They were <strong>not</strong> designed to address repeated literals or constant organization. <a href="https://openjdk.org/jeps/459">[openjdk.org]</a>, <a href="https://openjdk.org/jeps/430">[openjdk.org]</a></p>
+<p>More importantly, the proposed third preview, JEP 465, is currently listed by Project Amber as <strong>withdrawn</strong>. <a href="https://openjdk.org/projects/amber/">[openjdk.org]</a></p>
+<p>Therefore, string templates should not currently be treated as Java’s forthcoming answer to string handling.</p>
+<h2 id="what-this-tells-us"><a class="header" href="#what-this-tells-us">What this tells us</a></h2>
+<p>Java clearly invests in:</p>
+<ul>
+<li>string memory representation;</li>
+<li>runtime deduplication;</li>
+<li>concatenation performance;</li>
+<li>readable multiline strings;</li>
+<li>safer and clearer string composition.</li>
+</ul>
+<p>But Java does <strong>not appear to treat repeated source literals as a language-design problem</strong>.</p>
+<p>There is no apparent roadmap toward syntax such as:</p>
+<pre><code class="language-Java">vocabulary Status {
+    "active";
+    "ACTIVE";
+    "Active";
+}
+</code></pre>
+<p>or:</p>
+<pre><code class="language-Java">symbol active; // automatically means "active"
+</code></pre>
+<p>That supports your intuition: <strong>the language designers do not seem to consider Sonar-style literal deduplication important enough to warrant new syntax</strong>.</p>
+<h2 id="the-practical-conclusion"><a class="header" href="#the-practical-conclusion">The practical conclusion</a></h2>
+<p>Sonar’s duplicated-string rule is a static-analysis maintainability heuristic. It is not a Java language requirement, JVM requirement, or apparent OpenJDK design priority.</p>
+<p>A sensible team policy would be:</p>
+<blockquote>
+<p>Repeated text alone is not sufficient reason to introduce a constant. Extract it when the occurrences represent the same shared knowledge and must evolve together.</p>
+</blockquote>
+<p>For example:</p>
+<pre><code class="language-Java">if ("active".equals(status)) {
+    log.debug("Customer is active");
+}
+</code></pre>
+<p>Having <code>"active"</code> elsewhere is not automatically a design defect.</p>
+<p>By contrast:</p>
+<pre><code class="language-Java">request.setHeader("X-Correlation-Id", id);
+</code></pre>
+<p>repeated across many HTTP components probably represents one shared protocol decision, so a scoped constant is appropriate:</p>
+<pre><code class="language-Java">final class RequestHeaders {
+    static final String CORRELATION_ID = "X-Correlation-Id";
+    private RequestHeaders() {}
+}
+</code></pre>
+<h3 id="bottom-line"><a class="header" href="#bottom-line">Bottom line</a></h3>
+<p><strong>No, Java does not currently appear to have a roadmap item specifically addressing the declaration or deduplication of source-level string constants.</strong> Java’s development has concentrated on making strings more efficient, expressive, and safe, while leaving semantic organization to application design.</p>
+<p>So I would not design a complicated string framework in anticipation of Java “solving” this later. Keep obvious literals inline, centralize actual shared contracts, and tune or downgrade the Sonar rule when it consistently produces worse code.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-09f2665d.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-609e4cb8.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
